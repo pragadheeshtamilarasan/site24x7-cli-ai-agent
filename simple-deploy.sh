@@ -89,8 +89,18 @@ docker-compose -f "$COMPOSE_FILE" up -d
 echo -e "${YELLOW}⏳ Starting up...${NC}"
 sleep 15
 
-# Check if running
-if curl -f http://localhost:5000/api/v1/status > /dev/null 2>&1; then
+# Check if running (try multiple methods)
+if command -v curl >/dev/null 2>&1 && curl -f http://localhost:5000/api/v1/status > /dev/null 2>&1; then
+    APP_RUNNING=true
+elif command -v wget >/dev/null 2>&1 && wget -q --spider http://localhost:5000/api/v1/status; then
+    APP_RUNNING=true
+elif python3 -c "import requests; requests.get('http://localhost:5000/api/v1/status', timeout=5)" > /dev/null 2>&1; then
+    APP_RUNNING=true
+else
+    APP_RUNNING=false
+fi
+
+if [ "$APP_RUNNING" = true ]; then
     echo -e "${GREEN}✅ Application is running!${NC}"
     echo
     echo -e "${BLUE}🌐 Configure your application:${NC}"
@@ -114,7 +124,19 @@ if curl -f http://localhost:5000/api/v1/status > /dev/null 2>&1; then
     echo -e "   Restart: ${YELLOW}docker-compose -f $COMPOSE_FILE restart${NC}"
 else
     echo -e "${RED}❌ Application failed to start${NC}"
-    echo -e "${YELLOW}Check logs: docker-compose -f $COMPOSE_FILE logs${NC}"
+    echo -e "${YELLOW}📋 Debugging information:${NC}"
+    echo -e "   Check logs: ${YELLOW}docker-compose -f $COMPOSE_FILE logs${NC}"
+    echo -e "   Container status: ${YELLOW}docker-compose -f $COMPOSE_FILE ps${NC}"
+    echo -e "   Port check: ${YELLOW}docker port site24x7-cli-agent${NC}"
+    echo
+    echo -e "${BLUE}🔍 Quick debug steps:${NC}"
+    echo "1. Check container logs: docker-compose -f $COMPOSE_FILE logs"
+    echo "2. Check if container is running: docker-compose -f $COMPOSE_FILE ps"
+    echo "3. Test from inside container: docker exec -it site24x7-cli-agent curl http://localhost:5000/api/v1/status"
+    echo "4. Check port binding: docker port site24x7-cli-agent"
+    echo
+    echo -e "${YELLOW}For detailed debugging, run:${NC}"
+    echo "curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/debug-deploy.sh | bash"
     exit 1
 fi
 
