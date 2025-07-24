@@ -1,0 +1,209 @@
+"""
+Site24x7 CLI - {{ category_name.replace('_', ' ').title() }} Commands
+Generated automatically from Site24x7 API documentation
+
+This module provides CLI commands for {{ category_data.description or category_name.replace('_', ' ') }}.
+"""
+
+import click
+import json
+from typing import Dict, Any, Optional, List
+from rich.console import Console
+from rich.table import Table
+
+from site24x7_cli.base import BaseCommand, Site24x7Client
+from site24x7_cli.exceptions import Site24x7CLIError, APIError
+from site24x7_cli.utils import validate_monitor_id, format_timestamp, parse_key_value_pairs
+
+console = Console()
+
+
+class {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command(BaseCommand):
+    """Base command class for {{ category_name.replace('_', ' ') }} operations"""
+    
+    def __init__(self):
+        super().__init__()
+        self.category = "{{ category_name }}"
+
+
+@click.group(name='{{ category_name.replace('_', '-') }}')
+@click.pass_context
+def {{ category_name }}_group(ctx):
+    """{{ category_data.description or category_name.replace('_', ' ').title() }} management commands"""
+    pass
+
+
+{% for subcommand_name, subcommand_data in category_data.subcommands.items() %}
+@{{ category_name }}_group.group(name='{{ subcommand_name.replace('_', '-') }}')
+@click.pass_context
+def {{ subcommand_name }}_group(ctx):
+    """{{ subcommand_data.description or subcommand_name.replace('_', ' ').title() }} operations"""
+    pass
+
+
+{% for operation in subcommand_data.operations %}
+@{{ subcommand_name }}_group.command(name='{{ operation.name }}')
+{% if operation.name == 'list' %}
+@click.option('--limit', '-l', type=int, default=50, help='Number of items to retrieve')
+@click.option('--offset', type=int, default=0, help='Offset for pagination')
+@click.option('--status', type=click.Choice(['up', 'down', 'trouble', 'critical', 'suspended']), 
+              help='Filter by status')
+@click.option('--group-id', type=str, help='Filter by monitor group ID')
+{% elif operation.name == 'get' %}
+@click.argument('id', required=True)
+{% elif operation.name == 'create' %}
+@click.option('--name', '-n', required=True, help='{{ subcommand_name.replace('_', ' ').title() }} name')
+@click.option('--config', '-c', type=click.File('r'), help='Configuration file (JSON)')
+@click.option('--param', '-p', multiple=True, help='Parameters in key=value format')
+{% elif operation.name == 'update' %}
+@click.argument('id', required=True)
+@click.option('--name', '-n', help='New name')
+@click.option('--config', '-c', type=click.File('r'), help='Configuration file (JSON)')
+@click.option('--param', '-p', multiple=True, help='Parameters in key=value format')
+{% elif operation.name == 'delete' %}
+@click.argument('id', required=True)
+@click.option('--force', '-f', is_flag=True, help='Force deletion without confirmation')
+{% endif %}
+@click.pass_context
+def {{ operation.name }}(ctx, **kwargs):
+    """{{ operation.description }}"""
+    try:
+        command = {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command()
+        result = command.{{ operation.name }}_{{ subcommand_name }}(**kwargs)
+        
+        output_format = ctx.obj.get('output_format', 'table')
+        command.format_output(result, output_format)
+        
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        if ctx.obj.get('verbose'):
+            import traceback
+            console.print(f"[red]{traceback.format_exc()}[/red]")
+        raise click.ClickException(str(e))
+
+
+{% endfor %}
+{% endfor %}
+
+# Implementation methods for {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command class
+{% for subcommand_name, subcommand_data in category_data.subcommands.items() %}
+
+    def list_{{ subcommand_name }}(self, limit: int = 50, offset: int = 0, 
+                                  status: Optional[str] = None, 
+                                  group_id: Optional[str] = None, **kwargs) -> List[Dict[str, Any]]:
+        """List {{ subcommand_name.replace('_', ' ') }}"""
+        params = {'limit': limit, 'offset': offset}
+        
+        if status:
+            params['status'] = status
+        if group_id:
+            params['group_id'] = group_id
+        
+        endpoint = "{{ subcommand_data.get('endpoint', '/api/' + subcommand_name) }}"
+        response = self.client.get(endpoint, params=params)
+        
+        if 'data' in response:
+            return response['data']
+        return response.get('{{ subcommand_name }}', [])
+
+    def get_{{ subcommand_name }}(self, id: str, **kwargs) -> Dict[str, Any]:
+        """Get specific {{ subcommand_name.replace('_', ' ') }} by ID"""
+        if not validate_monitor_id(id):
+            raise ValueError(f"Invalid ID format: {id}")
+        
+        endpoint = f"{{ subcommand_data.get('endpoint', '/api/' + subcommand_name) }}/{id}"
+        response = self.client.get(endpoint)
+        
+        if 'data' in response:
+            return response['data']
+        return response
+
+    def create_{{ subcommand_name }}(self, name: str, config: Optional[Any] = None, 
+                                    param: List[str] = None, **kwargs) -> Dict[str, Any]:
+        """Create new {{ subcommand_name.replace('_', ' ') }}"""
+        data = {'display_name': name}
+        
+        # Load configuration from file if provided
+        if config:
+            config_data = json.load(config)
+            data.update(config_data)
+        
+        # Parse additional parameters
+        if param:
+            additional_params = parse_key_value_pairs(param)
+            data.update(additional_params)
+        
+        # Add default required fields based on monitor type
+        if 'monitor' in "{{ subcommand_name }}":
+            data.setdefault('monitor_type', '{{ subcommand_name.upper() }}')
+            data.setdefault('check_frequency', '5')
+            data.setdefault('timeout', '30')
+        
+        endpoint = "{{ subcommand_data.get('endpoint', '/api/' + subcommand_name) }}"
+        response = self.client.post(endpoint, data=data)
+        
+        if 'data' in response:
+            return response['data']
+        return response
+
+    def update_{{ subcommand_name }}(self, id: str, name: Optional[str] = None, 
+                                    config: Optional[Any] = None, 
+                                    param: List[str] = None, **kwargs) -> Dict[str, Any]:
+        """Update {{ subcommand_name.replace('_', ' ') }}"""
+        if not validate_monitor_id(id):
+            raise ValueError(f"Invalid ID format: {id}")
+        
+        data = {}
+        
+        if name:
+            data['display_name'] = name
+        
+        # Load configuration from file if provided
+        if config:
+            config_data = json.load(config)
+            data.update(config_data)
+        
+        # Parse additional parameters
+        if param:
+            additional_params = parse_key_value_pairs(param)
+            data.update(additional_params)
+        
+        if not data:
+            raise ValueError("No update parameters provided")
+        
+        endpoint = f"{{ subcommand_data.get('endpoint', '/api/' + subcommand_name) }}/{id}"
+        response = self.client.put(endpoint, data=data)
+        
+        if 'data' in response:
+            return response['data']
+        return response
+
+    def delete_{{ subcommand_name }}(self, id: str, force: bool = False, **kwargs) -> Dict[str, Any]:
+        """Delete {{ subcommand_name.replace('_', ' ') }}"""
+        if not validate_monitor_id(id):
+            raise ValueError(f"Invalid ID format: {id}")
+        
+        if not force:
+            click.confirm(f'Are you sure you want to delete {{ subcommand_name.replace("_", " ") }} {id}?', abort=True)
+        
+        endpoint = f"{{ subcommand_data.get('endpoint', '/api/' + subcommand_name) }}/{id}"
+        response = self.client.delete(endpoint)
+        
+        return response
+
+{% endfor %}
+
+# Add methods to the command class
+{% for subcommand_name, subcommand_data in category_data.subcommands.items() %}
+setattr({{ category_name.replace('_', ' ').title().replace(' ', '') }}Command, 'list_{{ subcommand_name }}', 
+        {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command.__dict__['list_{{ subcommand_name }}'])
+setattr({{ category_name.replace('_', ' ').title().replace(' ', '') }}Command, 'get_{{ subcommand_name }}', 
+        {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command.__dict__['get_{{ subcommand_name }}'])
+setattr({{ category_name.replace('_', ' ').title().replace(' ', '') }}Command, 'create_{{ subcommand_name }}', 
+        {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command.__dict__['create_{{ subcommand_name }}'])
+setattr({{ category_name.replace('_', ' ').title().replace(' ', '') }}Command, 'update_{{ subcommand_name }}', 
+        {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command.__dict__['update_{{ subcommand_name }}'])
+setattr({{ category_name.replace('_', ' ').title().replace(' ', '') }}Command, 'delete_{{ subcommand_name }}', 
+        {{ category_name.replace('_', ' ').title().replace(' ', '') }}Command.__dict__['delete_{{ subcommand_name }}'])
+{% endfor %}
+
