@@ -21,7 +21,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     beautifulsoup4 \
     trafilatura \
     pygithub \
-    apscheduler
+    apscheduler \
+    gitpython
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/data && \
