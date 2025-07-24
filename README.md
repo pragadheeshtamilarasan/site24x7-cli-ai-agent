@@ -13,7 +13,7 @@ curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli
 
 **For corporate networks or connectivity issues:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/network-deploy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/proxy-deploy.sh | bash
 ```
 
 Both commands automatically:
