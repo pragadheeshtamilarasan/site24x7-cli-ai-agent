@@ -38,8 +38,14 @@ Create `.env` file in project root:
 GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
 GITHUB_USERNAME=your_github_username
 
-# Optional: OpenAI API (AI features disabled without this)
+# Optional: AI Configuration (choose one)
+# For OpenAI:
 OPENAI_API_KEY=your_openai_api_key_here
+
+# For Local LLM (OpenAI compatible):
+OPENAI_API_KEY=your_local_llm_api_key
+OPENAI_BASE_URL=http://localhost:3100/v1
+USE_LOCAL_LLM=true
 
 # Site24x7 - No authentication needed for documentation scraping
 
@@ -63,7 +69,7 @@ Access the dashboard at: http://localhost:5000
 ### Technology Stack
 - **Backend**: FastAPI + Python 3.11
 - **Database**: SQLite (auto-created)
-- **AI**: OpenAI GPT-4o
+- **AI**: OpenAI GPT-4o or Local LLM (OpenAI compatible)
 - **Scheduler**: APScheduler
 - **GitHub**: PyGithub API
 - **Web Scraping**: BeautifulSoup4 + Trafilatura
@@ -74,7 +80,7 @@ Access the dashboard at: http://localhost:5000
 1. **API Scraper** - Extracts Site24x7 API documentation
 2. **CLI Generator** - Creates comprehensive CLI tools from documentation
 3. **GitHub Manager** - Autonomous repository management
-4. **AI Analyzer** - Intelligent analysis and code generation
+4. **AI Analyzer** - Intelligent analysis and code generation (OpenAI or Local LLM)
 5. **Scheduler** - Automated task execution
 
 ### Database Schema
@@ -98,10 +104,34 @@ Access the dashboard at: http://localhost:5000
    - `workflow` (GitHub Actions)
    - `write:packages` (Package registry)
 
-#### OpenAI API Key (Optional)
+#### AI Configuration (Optional)
+
+The application supports both OpenAI and local LLM configurations:
+
+**Option 1: OpenAI (Cloud)**
 1. Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
 2. Create new API key
-3. Add to `.env` file (AI features disabled without this)
+3. Add to `.env` file:
+   ```env
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+**Option 2: Local LLM (OpenAI Compatible)**
+1. Set up your local LLM with OpenAI API compatibility
+2. Add to `.env` file:
+   ```env
+   OPENAI_API_KEY=your_local_llm_api_key
+   OPENAI_BASE_URL=http://localhost:3100/v1
+   USE_LOCAL_LLM=true
+   ```
+
+**Supported Local LLM Providers:**
+- LM Studio
+- Ollama with OpenAI compatibility
+- vLLM
+- Any OpenAI-compatible endpoint
+
+AI features are disabled if no configuration is provided.
 
 # Site24x7 Configuration
 No additional authentication is required. The application scrapes publicly available API documentation.
@@ -112,7 +142,9 @@ No additional authentication is required. The application scrapes publicly avail
 |----------|----------|-------------|---------|
 | `GITHUB_PERSONAL_ACCESS_TOKEN` | Yes | GitHub API access | - |
 | `GITHUB_USERNAME` | Yes | Your GitHub username | - |
-| `OPENAI_API_KEY` | No | OpenAI API access | - |
+| `OPENAI_API_KEY` | No | OpenAI/Local LLM API key | - |
+| `OPENAI_BASE_URL` | No | Local LLM base URL (OpenAI compatible) | - |
+| `USE_LOCAL_LLM` | No | Use local LLM instead of OpenAI | false |
 | `SECRET_KEY` | No | Application security | auto-generated |
 | `SCRAPER_INTERVAL_HOURS` | No | API scraping frequency | 6 |
 | `MAINTENANCE_INTERVAL_HOURS` | No | GitHub maintenance frequency | 24 |
@@ -130,7 +162,7 @@ site24x7-cli-ai-agent/
 ├── README.md                  # This file
 │
 ├── services/                  # Core business logic
-│   ├── ai_analyzer.py         # OpenAI integration
+│   ├── ai_analyzer.py         # AI integration (OpenAI/Local LLM)
 │   ├── api_scraper.py         # Site24x7 API scraping
 │   ├── cli_generator.py       # CLI code generation
 │   ├── github_manager.py      # GitHub repository management
