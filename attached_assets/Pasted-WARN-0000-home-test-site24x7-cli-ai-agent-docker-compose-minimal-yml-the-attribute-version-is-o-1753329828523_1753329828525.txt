@@ -1,0 +1,222 @@
+WARN[0000] /home/test/site24x7-cli-ai-agent/docker-compose.minimal.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+[+] Running 1/1
+ ✔ Container site24x7-cli-agent  Started                                                                                                                                                                       0.5s 
+📊 Container status:
+WARN[0000] /home/test/site24x7-cli-ai-agent/docker-compose.minimal.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+NAME                 IMAGE                                  COMMAND            SERVICE          CREATED                  STATUS                                     PORTS
+site24x7-cli-agent   site24x7-cli-ai-agent-site24x7-agent   "python main.py"   site24x7-agent   Less than a second ago   Up Less than a second (health: starting)   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+📋 Application logs:
+WARN[0000] /home/test/site24x7-cli-ai-agent/docker-compose.minimal.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+🔍 Port check:
+tcp    LISTEN  0       4096                0.0.0.0:5000           0.0.0.0:*      users:(("docker-proxy",pid=2639655,fd=4))                                      
+tcp    LISTEN  0       128               127.0.0.1:50000          0.0.0.0:*      users:(("oneagentwatchdo",pid=1088,fd=8))                                      
+tcp    LISTEN  0       128               127.0.0.1:50001          0.0.0.0:*      users:(("oneagentwatchdo",pid=1088,fd=23))                                     
+tcp    LISTEN  0       128               127.0.0.1:50002          0.0.0.0:*      users:(("oneagentwatchdo",pid=1088,fd=17))                                     
+tcp    LISTEN  0       128               127.0.0.1:50003          0.0.0.0:*      users:(("oneagentwatchdo",pid=1088,fd=27))                                     
+tcp    LISTEN  0       4096                   [::]:5000              [::]:*      users:(("docker-proxy",pid=2639662,fd=4))                                      
+🌐 Testing connectivity:
+Attempt 1:
+* Uses proxy env variable http_proxy == 'http://192.168.100.100:3128'
+*   Trying 192.168.100.100:3128...
+* TCP_NODELAY set
+* Connected to 192.168.100.100 (192.168.100.100) port 3128 (#0)
+> GET http://localhost:5000/api/v1/status HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Server: squid/5.9-20230511-r50243625e
+< Mime-Version: 1.0
+< Date: Thu, 24 Jul 2025 04:02:08 GMT
+< Content-Type: text/html;charset=utf-8
+< Content-Length: 53
+< X-Squid-Error: ERR_NOPROXY_INTERNAL 0
+< Vary: Accept-Language
+< Content-Language: en
+< X-Cache: MISS from proxy-live6.csez.zohocorpin.com
+< Connection: close
+< 
+* Closing connection 0
+Internal Error: Missing Template ERR_NOPROXY_INTERNAL---
+Attempt 2:
+* Uses proxy env variable http_proxy == 'http://192.168.100.100:3128'
+*   Trying 192.168.100.100:3128...
+* TCP_NODELAY set
+* Connected to 192.168.100.100 (192.168.100.100) port 3128 (#0)
+> GET http://localhost:5000/api/v1/status HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Server: squid/5.9-20230511-r50243625e
+< Mime-Version: 1.0
+< Date: Thu, 24 Jul 2025 04:02:11 GMT
+< Content-Type: text/html;charset=utf-8
+< Content-Length: 53
+< X-Squid-Error: ERR_NOPROXY_INTERNAL 0
+< Vary: Accept-Language
+< Content-Language: en
+< X-Cache: MISS from proxy-live6.csez.zohocorpin.com
+< Connection: close
+< 
+* Closing connection 0
+Internal Error: Missing Template ERR_NOPROXY_INTERNAL---
+Attempt 3:
+* Uses proxy env variable http_proxy == 'http://192.168.100.100:3128'
+*   Trying 192.168.100.100:3128...
+* TCP_NODELAY set
+* Connected to 192.168.100.100 (192.168.100.100) port 3128 (#0)
+> GET http://localhost:5000/api/v1/status HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Server: squid/5.9-20230511-r50243625e
+< Mime-Version: 1.0
+< Date: Thu, 24 Jul 2025 04:02:14 GMT
+< Content-Type: text/html;charset=utf-8
+< Content-Length: 53
+< X-Squid-Error: ERR_NOPROXY_INTERNAL 0
+< Vary: Accept-Language
+< Content-Language: en
+< X-Cache: MISS from proxy-live6.csez.zohocorpin.com
+< Connection: close
+< 
+* Closing connection 0
+Internal Error: Missing Template ERR_NOPROXY_INTERNAL---
+Attempt 4:
+* Uses proxy env variable http_proxy == 'http://192.168.100.100:3128'
+*   Trying 192.168.100.100:3128...
+* TCP_NODELAY set
+* Connected to 192.168.100.100 (192.168.100.100) port 3128 (#0)
+> GET http://localhost:5000/api/v1/status HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Server: squid/5.9-20230511-r50243625e
+< Mime-Version: 1.0
+< Date: Thu, 24 Jul 2025 04:02:17 GMT
+< Content-Type: text/html;charset=utf-8
+< Content-Length: 53
+< X-Squid-Error: ERR_NOPROXY_INTERNAL 0
+< Vary: Accept-Language
+< Content-Language: en
+< X-Cache: MISS from proxy-live6.csez.zohocorpin.com
+< Connection: close
+< 
+* Closing connection 0
+Internal Error: Missing Template ERR_NOPROXY_INTERNAL---
+Attempt 5:
+* Uses proxy env variable http_proxy == 'http://192.168.100.100:3128'
+*   Trying 192.168.100.100:3128...
+* TCP_NODELAY set
+* Connected to 192.168.100.100 (192.168.100.100) port 3128 (#0)
+> GET http://localhost:5000/api/v1/status HTTP/1.1
+> Host: localhost:5000
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Server: squid/5.9-20230511-r50243625e
+< Mime-Version: 1.0
+< Date: Thu, 24 Jul 2025 04:02:20 GMT
+< Content-Type: text/html;charset=utf-8
+< Content-Length: 53
+< X-Squid-Error: ERR_NOPROXY_INTERNAL 0
+< Vary: Accept-Language
+< Content-Language: en
+< X-Cache: MISS from proxy-live6.csez.zohocorpin.com
+< Connection: close
+< 
+* Closing connection 0
+Internal Error: Missing Template ERR_NOPROXY_INTERNAL---
+🔧 Container inspection:
+        "Path": "python",
+        "Args": [
+            "main.py"
+        ],
+        "State": {
+            "Status": "restarting",
+            "Running": true,
+            "Paused": false,
+            "Restarting": true,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 0,
+            "ExitCode": 1,
+            "Error": "",
+            "StartedAt": "2025-07-24T04:02:21.625245501Z",
+            "FinishedAt": "2025-07-24T04:02:22.96706656Z",
+            "Health": {
+                "Status": "unhealthy",
+                "FailingStreak": 0,
+                "Log": []
+            }
+        },
+        "Image": "sha256:1f4d6fefb647e0c613b34a9208b9782c36072c0f372677ecbad9c0e7bae7b7be",
+--
+            ],
+            "Cmd": [
+                "python",
+                "main.py"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD",
+                    "python",
+                    "-c",
+                    "import requests; requests.get('http://localhost:5000/api/v1/status', timeout=5)"
+--
+            "SandboxKey": "",
+            "Ports": {},
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "site24x7-cli-ai-agent_default": {
+--
+                    "MacAddress": "",
+                    "DriverOpts": null,
+                    "NetworkID": "1c635aabbbab3605511e1d6bb961a8d8ef69e27380ca757b615008b41f2981cc",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+📚 Next steps:
+If the application is running in the container but not accessible:
+1. Check if port 5000 is already in use
+2. Try a different port by editing docker-compose.minimal.yml
+3. Check firewall settings
+4. Try accessing from inside the container:
+   docker exec -it site24x7-cli-agent curl http://localhost:5000/api/v1/status
+root@8250-u20-aio:/home/test# docker exec -it site24x7-cli-agent curl http://localhost:5000/api/v1/status
+Error response from daemon: Container fb92cc08f6710407d91cf32aa9b2a6b7aa4e8324c1c12120f87850fa36957923 is restarting, wait until the container is running
