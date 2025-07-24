@@ -11,9 +11,9 @@ An autonomous AI-powered system that scrapes Site24x7 API documentation, generat
 curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
 ```
 
-**For corporate networks or connectivity issues:**
+**For any local machine (handles corporate networks automatically):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/network-free-deploy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/fixed-local-deploy.sh | bash
 ```
 
 Both commands automatically:
