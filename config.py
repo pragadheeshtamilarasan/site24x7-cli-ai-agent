@@ -22,9 +22,11 @@ class Settings(BaseSettings):
     site24x7_api_base: str = Field(default="https://www.site24x7.com/api/")
     site24x7_docs_url: str = Field(default="https://www.site24x7.com/help/api/")
     
-    # OpenAI Configuration
+    # AI Configuration (OpenAI or Local LLM with OpenAI compatibility)
     openai_api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
     openai_model: str = Field(default="gpt-4o")  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+    openai_base_url: Optional[str] = Field(default_factory=lambda: os.getenv("OPENAI_BASE_URL", None))  # For local LLM endpoints
+    use_local_llm: bool = Field(default_factory=lambda: bool(os.getenv("USE_LOCAL_LLM", "false").lower() == "true"))
     
     # Scheduler Configuration
     scraper_interval_hours: int = Field(default=6)
