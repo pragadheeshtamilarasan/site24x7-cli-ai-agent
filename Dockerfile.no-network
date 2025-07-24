@@ -1,0 +1,42 @@
+# Network-independent Dockerfile that doesn't require external package downloads
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Copy application files first
+COPY . .
+
+# Install Python dependencies directly (no apt updates needed)
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    fastapi \
+    uvicorn \
+    pydantic \
+    pydantic-settings \
+    python-multipart \
+    jinja2 \
+    openai \
+    requests \
+    beautifulsoup4 \
+    trafilatura \
+    pygithub \
+    apscheduler
+
+# Create necessary directories and set permissions
+RUN mkdir -p /app/data && \
+    chmod +x /app/main.py
+
+# Set environment to disable GitPython git requirements
+ENV GIT_PYTHON_REFRESH=quiet
+ENV GIT_PYTHON_GIT_EXECUTABLE=/usr/bin/true
+
+# Expose port
+EXPOSE 5000
+
+# Health check using Python with better error handling
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD python -c "import requests; import sys; sys.exit(0 if requests.get('http://127.0.0.1:5000/api/v1/status', timeout=3).status_code == 200 else 1)" || exit 1
+
+# Run the application
+CMD ["python", "main.py"]
