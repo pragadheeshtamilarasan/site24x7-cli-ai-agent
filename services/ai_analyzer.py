@@ -21,16 +21,27 @@ class AIAnalyzer:
         self.openai_api_key = settings.openai_api_key
         self.client = None
         self.model = settings.openai_model  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        self.base_url = settings.openai_base_url
+        self.use_local_llm = settings.use_local_llm
         
         if self.openai_api_key:
             try:
-                self.client = OpenAI(api_key=self.openai_api_key)
-                logger.info("AIAnalyzer initialized successfully with OpenAI API key")
+                if self.use_local_llm and self.base_url:
+                    logger.info(f"Initializing local LLM client with base URL: {self.base_url}")
+                    self.client = OpenAI(
+                        api_key=self.openai_api_key,
+                        base_url=self.base_url
+                    )
+                    logger.info(f"Local LLM client initialized successfully with model: {self.model}")
+                else:
+                    logger.info("Initializing OpenAI client")
+                    self.client = OpenAI(api_key=self.openai_api_key)
+                    logger.info("OpenAI client initialized successfully")
             except Exception as e:
-                logger.error(f"Failed to initialize OpenAI client: {e}")
+                logger.error(f"Failed to initialize AI client: {e}")
                 self.client = None
         else:
-            logger.warning("OpenAI API key not provided - AI features will be disabled")
+            logger.warning("AI API key not provided - AI features will be disabled")
     
     def is_available(self) -> bool:
         """Check if AI services are available"""
