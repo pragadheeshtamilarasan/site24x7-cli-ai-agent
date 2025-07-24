@@ -110,21 +110,10 @@
                                     <hr>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="site24x7_oauth_token" class="form-label">
-                                            <i class="fas fa-key me-1"></i>OAuth Token
-                                        </label>
-                                        <div class="input-group">
-                                            <input type="password" class="form-control" id="site24x7_oauth_token" name="site24x7_oauth_token" 
-                                                   placeholder="Zoho OAuth token..." 
-                                                   value="{{ config.get('site24x7_oauth_token', '') }}">
-                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('site24x7_oauth_token')">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </div>
-                                        <div class="form-text">
-                                            <small>Optional: Site24x7 OAuth token for API testing (CLI will use user-provided tokens)</small>
-                                        </div>
+                                    <div class="alert alert-info mb-3">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>No Authentication Required</strong>
+                                        <p class="mb-0 mt-1">Site24x7 documentation scraping uses publicly available API documentation. No OAuth token needed.</p>
                                     </div>
                                 </div>
                             </div>
@@ -249,8 +238,8 @@
                                         <i class="fas fa-monitor-heart-rate fa-2x text-{{ 'success' if config.get('site24x7_oauth_token') else 'secondary' }}"></i>
                                     </div>
                                     <div class="fw-bold">Site24x7</div>
-                                    <div class="text-{{ 'success' if config.get('site24x7_oauth_token') else 'muted' }}">
-                                        {{ 'Configured' if config.get('site24x7_oauth_token') else 'Optional' }}
+                                    <div class="text-success">
+                                        Ready (Public Access)
                                     </div>
                                 </div>
                             </div>
