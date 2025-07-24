@@ -21,7 +21,6 @@ class Settings(BaseSettings):
     # Site24x7 Configuration
     site24x7_api_base: str = Field(default="https://www.site24x7.com/api/")
     site24x7_docs_url: str = Field(default="https://www.site24x7.com/help/api/")
-    site24x7_oauth_token: Optional[str] = Field(default=None)
     
     # OpenAI Configuration
     openai_api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
