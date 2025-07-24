@@ -1,0 +1,42 @@
+Test attempt 1/5...
+Container status: restarting
+Container not running, checking logs...
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+site24x7-cli-agent  | Traceback (most recent call last):
+site24x7-cli-agent  |   File "/app/main.py", line 17, in <module>
+site24x7-cli-agent  |     from services.scheduler import SchedulerService
+site24x7-cli-agent  |   File "/app/services/scheduler.py", line 18, in <module>
+site24x7-cli-agent  |     from services.github_manager import GitHubManager
+site24x7-cli-agent  |   File "/app/services/github_manager.py", line 14, in <module>
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+Waiting 15 seconds before next attempt...
+Test attempt 2/5...
+Container status: restarting
+Container not running, checking logs...
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+site24x7-cli-agent  | Traceback (most recent call last):
+site24x7-cli-agent  |   File "/app/main.py", line 17, in <module>
+site24x7-cli-agent  |     from services.scheduler import SchedulerService
+site24x7-cli-agent  |   File "/app/services/scheduler.py", line 18, in <module>
+site24x7-cli-agent  |     from services.github_manager import GitHubManager
+site24x7-cli-agent  |   File "/app/services/github_manager.py", line 14, in <module>
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+Waiting 15 seconds before next attempt...
+Test attempt 3/5...
+Container status: restarting
+Container not running, checking logs...
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+site24x7-cli-agent  | Traceback (most recent call last):
+site24x7-cli-agent  |   File "/app/main.py", line 17, in <module>
+site24x7-cli-agent  |     from services.scheduler import SchedulerService
+site24x7-cli-agent  |   File "/app/services/scheduler.py", line 18, in <module>
+site24x7-cli-agent  |     from services.github_manager import GitHubManager
+site24x7-cli-agent  |   File "/app/services/github_manager.py", line 14, in <module>
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  | ModuleNotFoundError: No module named 'git'
+Waiting 15 seconds before next attempt...
