@@ -1,0 +1,87 @@
+🏢 Site24x7 CLI AI Agent - Corporate Network Deploy
+======================================================
+📥 Downloading project...
+Cloning into 'site24x7-cli-ai-agent'...
+remote: Enumerating objects: 590, done.
+remote: Counting objects: 100% (102/102), done.
+remote: Compressing objects: 100% (102/102), done.
+remote: Total 590 (delta 82), reused 0 (delta 0), pack-reused 488 (from 3)
+Receiving objects: 100% (590/590), 390.03 KiB | 4.59 MiB/s, done.
+Resolving deltas: 100% (474/474), done.
+🌐 Corporate proxy detected: http://192.168.100.100:3128
+Setting up proxy bypass for localhost...
+Added localhost to proxy bypass
+📝 Creating configuration...
+🔨 Building application...
+[+] Building 15.1s (13/13) FINISHED                                                                                                                                                                                 
+ => [internal] load local bake definitions                                                                                                                                                                     0.0s
+ => => reading from stdin 437B                                                                                                                                                                                 0.0s
+ => [internal] load build definition from Dockerfile.minimal                                                                                                                                                   0.0s
+ => => transferring dockerfile: 1.05kB                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                                                                                                                            0.9s
+ => [internal] load .dockerignore                                                                                                                                                                              0.0s
+ => => transferring context: 549B                                                                                                                                                                              0.0s
+ => [1/6] FROM docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                                      0.0s
+ => [internal] load build context                                                                                                                                                                              0.0s
+ => => transferring context: 614.35kB                                                                                                                                                                          0.0s
+ => CACHED [2/6] WORKDIR /app                                                                                                                                                                                  0.0s
+ => [3/6] COPY pyproject.toml ./                                                                                                                                                                               0.0s
+ => [4/6] RUN pip install --no-cache-dir --upgrade pip &&     pip install --no-cache-dir     fastapi     uvicorn     pydantic     pydantic-settings     python-multipart     jinja2     openai     requests   11.4s
+ => [5/6] COPY . .                                                                                                                                                                                             0.0s 
+ => [6/6] RUN mkdir -p /app/data &&     chmod +x /app/main.py                                                                                                                                                  0.3s 
+ => exporting to image                                                                                                                                                                                         2.1s 
+ => => exporting layers                                                                                                                                                                                        2.0s 
+ => => writing image sha256:81c1d7738a6d233473704dd8a01ce2b18b4c413edb24c117d5cdcc9b1a9c0586                                                                                                                   0.0s 
+ => => naming to docker.io/library/site24x7-cli-ai-agent-site24x7-agent                                                                                                                                        0.0s 
+ => resolving provenance for metadata file                                                                                                                                                                     0.0s
+[+] Building 1/1
+ ✔ site24x7-agent  Built                                                                                                                                                                                       0.0s 
+🚀 Starting application...
+[+] Running 1/1
+ ✔ Container site24x7-cli-agent  Started                                                                                                                                                                       0.4s 
+⏳ Waiting for container startup...
+📊 Container status:
+NAME                 IMAGE                                  COMMAND            SERVICE          CREATED          STATUS                                     PORTS
+site24x7-cli-agent   site24x7-cli-ai-agent-site24x7-agent   "python main.py"   site24x7-agent   10 seconds ago   Up Less than a second (health: starting)   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp
+📋 Recent application logs:
+site24x7-cli-agent  |     import git
+site24x7-cli-agent  |   File "/usr/local/lib/python3.11/site-packages/git/__init__.py", line 298, in <module>
+site24x7-cli-agent  |     raise ImportError("Failed to initialize: {0}".format(_exc)) from _exc
+site24x7-cli-agent  | ImportError: Failed to initialize: Bad git executable.
+site24x7-cli-agent  | The git executable must be specified in one of the following ways:
+site24x7-cli-agent  |     - be included in your $PATH
+site24x7-cli-agent  |     - be set via $GIT_PYTHON_GIT_EXECUTABLE
+site24x7-cli-agent  |     - explicitly set via git.refresh(<full-path-to-git-executable>)
+site24x7-cli-agent  | 
+site24x7-cli-agent  | All git commands will error until this is rectified.
+site24x7-cli-agent  | 
+site24x7-cli-agent  | This initial message can be silenced or aggravated in the future by setting the
+site24x7-cli-agent  | $GIT_PYTHON_REFRESH environment variable. Use one of the following values:
+site24x7-cli-agent  |     - quiet|q|silence|s|silent|none|n|0: for no message or exception
+site24x7-cli-agent  |     - warn|w|warning|log|l|1: for a warning message (logging level CRITICAL, displayed by default)
+site24x7-cli-agent  |     - error|e|exception|raise|r|2: for a raised exception
+site24x7-cli-agent  | 
+site24x7-cli-agent  | Example:
+site24x7-cli-agent  |     export GIT_PYTHON_REFRESH=quiet
+site24x7-cli-agent  | 
+🌐 Testing application (bypassing proxy)...
+Container IP: 
+Test 1: Testing localhost...
+Localhost test failed
+Test 3: Testing from inside container...
+Internal container test failed
+❌ Application connectivity issues detected
+
+🔍 Diagnostic Information:
+- Container Status: restarting
+- Internal Access: no
+- Port Binding: 
+
+📋 Troubleshooting Steps:
+1. Check container logs: docker-compose -f docker-compose.minimal.yml logs
+2. Restart container: docker-compose -f docker-compose.minimal.yml restart
+3. Try different port: Edit docker-compose.minimal.yml to use port 8080
+4. Check firewall: sudo ufw status
+
+
+🎉 Deployment completed with corporate network handling!
