@@ -41,8 +41,7 @@ GITHUB_USERNAME=your_github_username
 # Optional: OpenAI API (AI features disabled without this)
 OPENAI_API_KEY=your_openai_api_key_here
 
-# Optional: Site24x7 API
-SITE24X7_OAUTH_TOKEN=your_site24x7_token_here
+# Site24x7 - No authentication needed for documentation scraping
 
 # Application Settings
 SECRET_KEY=your_secret_key_here
@@ -104,9 +103,8 @@ Access the dashboard at: http://localhost:5000
 2. Create new API key
 3. Add to `.env` file (AI features disabled without this)
 
-#### Site24x7 OAuth Token (Optional)
-1. Site24x7 Admin > Developer > API
-2. Generate OAuth token
+# Site24x7 Configuration
+No additional authentication is required. The application scrapes publicly available API documentation.
 
 ### Environment Variables
 
@@ -115,7 +113,6 @@ Access the dashboard at: http://localhost:5000
 | `GITHUB_PERSONAL_ACCESS_TOKEN` | Yes | GitHub API access | - |
 | `GITHUB_USERNAME` | Yes | Your GitHub username | - |
 | `OPENAI_API_KEY` | No | OpenAI API access | - |
-| `SITE24X7_OAUTH_TOKEN` | No | Site24x7 API access | - |
 | `SECRET_KEY` | No | Application security | auto-generated |
 | `SCRAPER_INTERVAL_HOURS` | No | API scraping frequency | 6 |
 | `MAINTENANCE_INTERVAL_HOURS` | No | GitHub maintenance frequency | 24 |
