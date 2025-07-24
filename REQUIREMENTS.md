@@ -130,11 +130,8 @@ DEBUG=false
 3. Copy key and add to `.env` file
 4. **Note**: Without this key, AI features are disabled but the app still works
 
-### Site24x7 OAuth Token (Optional)
-1. Login to Site24x7 account
-2. Go to Admin > Developer > API
-3. Generate OAuth token
-4. Copy token and add to `.env` file
+### Site24x7 Configuration
+No authentication required. The application accesses publicly available API documentation from Site24x7.
 
 ## Verification
 
