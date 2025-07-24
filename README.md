@@ -11,10 +11,15 @@ An autonomous AI-powered system that scrapes Site24x7 API documentation, generat
 curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
 ```
 
-This command automatically:
-- Installs Docker and Docker Compose (if needed)
-- Downloads and builds the application
-- Starts the service on port 5000
+**For corporate networks or connectivity issues:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/network-deploy.sh | bash
+```
+
+Both commands automatically:
+- Install Docker and Docker Compose (if needed)
+- Download and build the application using network-resilient strategies
+- Start the service on port 5000
 - No terminal configuration needed - configure via web UI!
 
 **Access Points:**
