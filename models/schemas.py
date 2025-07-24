@@ -46,7 +46,7 @@ class HealthStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
-class SchedulerStatus(str, Enum):
+class SchedulerStatusEnum(str, Enum):
     """Scheduler status"""
     RUNNING = "running"
     STOPPED = "stopped"
@@ -153,7 +153,7 @@ class CLIVersion(BaseModel):
 class SystemStatus(BaseModel):
     """System status model"""
     overall_health: HealthStatus = Field(..., description="Overall system health")
-    scheduler_status: SchedulerStatus = Field(..., description="Scheduler status")
+    scheduler_status: SchedulerStatusEnum = Field(..., description="Scheduler status")
     api_documentation: Dict[str, Any] = Field(..., description="API documentation status")
     cli_version: Dict[str, Any] = Field(..., description="CLI version information")
     recent_activity: Dict[str, Any] = Field(..., description="Recent activity summary")
@@ -179,7 +179,10 @@ class ConfigurationUpdate(BaseModel):
     github_token: Optional[str] = Field(None, description="GitHub personal access token")
     github_username: Optional[str] = Field(None, description="GitHub username")
     site24x7_oauth_token: Optional[str] = Field(None, description="Site24x7 OAuth token")
-    openai_api_key: Optional[str] = Field(None, description="OpenAI API key")
+    openai_api_key: Optional[str] = Field(None, description="OpenAI/Local LLM API key")
+    openai_model: Optional[str] = Field(None, description="OpenAI/Local LLM model name")
+    openai_base_url: Optional[str] = Field(None, description="Local LLM base URL (for OpenAI compatibility)")
+    use_local_llm: Optional[bool] = Field(None, description="Whether to use local LLM instead of OpenAI")
     scraper_interval_hours: Optional[int] = Field(None, ge=1, le=168, description="Scraper interval in hours")
     maintenance_interval_hours: Optional[int] = Field(None, ge=1, le=168, description="Maintenance interval in hours")
 
