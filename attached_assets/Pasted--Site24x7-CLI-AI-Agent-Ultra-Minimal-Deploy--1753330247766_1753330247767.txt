@@ -1,0 +1,168 @@
+🚀 Site24x7 CLI AI Agent - Ultra Minimal Deploy
+==================================================
+📥 Downloading project...
+Cloning into 'site24x7-cli-ai-agent'...
+remote: Enumerating objects: 643, done.
+remote: Counting objects: 100% (54/54), done.
+remote: Compressing objects: 100% (54/54), done.
+remote: Total 643 (delta 43), reused 0 (delta 0), pack-reused 589 (from 1)
+Receiving objects: 100% (643/643), 376.35 KiB | 4.76 MiB/s, done.
+Resolving deltas: 100% (545/545), done.
+🌐 Corporate proxy detected, setting bypass for localhost
+🛑 Stopping existing containers...
+📝 Creating configuration...
+🔨 Building application with git support...
+[+] Building 40.5s (7/12)                                                                                                                                                                                           
+ => [internal] load local bake definitions                                                                                                                                                                     0.0s
+ => => reading from stdin 437B                                                                                                                                                                                 0.0s
+ => [internal] load build definition from Dockerfile.minimal                                                                                                                                                   0.0s
+ => => transferring dockerfile: 1.20kB                                                                                                                                                                         0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                                                                                                                            1.7s
+ => [internal] load .dockerignore                                                                                                                                                                              0.0s
+ => => transferring context: 549B                                                                                                                                                                              0.0s
+ => CACHED [1/7] FROM docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                               0.0s
+ => [internal] load build context                                                                                                                                                                              0.1s
+ => => transferring context: 627.95kB                                                                                                                                                                          0.0s
+ => ERROR [2/7] RUN apt-get update && apt-get install -y --no-install-recommends     git     && rm -rf /var/lib/apt/lists/*                                                                                   38.6s
+------                                                                                                                                                                                                              
+ > [2/7] RUN apt-get update && apt-get install -y --no-install-recommends     git     && rm -rf /var/lib/apt/lists/*:                                                                                               
+31.52 Ign:1 http://deb.debian.org/debian bookworm InRelease                                                                                                                                                         
+31.52 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease                                                                                                                                                 
+31.52 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease                                                                                                                                       
+32.52 Ign:1 http://deb.debian.org/debian bookworm InRelease                                                                                                                                                         
+32.52 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+32.52 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+34.52 Ign:1 http://deb.debian.org/debian bookworm InRelease
+34.52 Ign:2 http://deb.debian.org/debian bookworm-updates InRelease
+34.52 Ign:3 http://deb.debian.org/debian-security bookworm-security InRelease
+38.52 Err:1 http://deb.debian.org/debian bookworm InRelease
+38.52   Could not connect to debian.map.fastlydns.net:80 (151.101.194.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.2.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.66.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.130.132), connection timed out Unable to connect to deb.debian.org:http:
+38.52 Err:2 http://deb.debian.org/debian bookworm-updates InRelease
+38.52   Unable to connect to deb.debian.org:http:
+38.52 Err:3 http://deb.debian.org/debian-security bookworm-security InRelease
+38.52   Unable to connect to deb.debian.org:http:
+38.54 Reading package lists...
+38.56 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm/InRelease  Could not connect to debian.map.fastlydns.net:80 (151.101.194.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.2.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.66.132), connection timed out Could not connect to debian.map.fastlydns.net:80 (151.101.130.132), connection timed out Unable to connect to deb.debian.org:http:
+38.56 W: Failed to fetch http://deb.debian.org/debian/dists/bookworm-updates/InRelease  Unable to connect to deb.debian.org:http:
+38.56 W: Failed to fetch http://deb.debian.org/debian-security/dists/bookworm-security/InRelease  Unable to connect to deb.debian.org:http:
+38.56 W: Some index files failed to download. They have been ignored, or old ones used instead.
+38.57 Reading package lists...
+38.59 Building dependency tree...
+38.59 Reading state information...
+38.59 E: Unable to locate package git
+------
+Dockerfile.minimal:5
+
+--------------------
+
+   4 |     # Install git (required by GitPython)
+
+   5 | >>> RUN apt-get update && apt-get install -y --no-install-recommends \
+
+   6 | >>>     git \
+
+   7 | >>>     && rm -rf /var/lib/apt/lists/*
+
+   8 |     
+
+--------------------
+
+failed to solve: process "/bin/sh -c apt-get update && apt-get install -y --no-install-recommends     git     && rm -rf /var/lib/apt/lists/*" did not complete successfully: exit code: 100
+
+2763  /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+github.com/moby/buildkit/executor/runcexecutor.exitError
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/executor/runcexecutor/executor.go:380
+
+github.com/moby/buildkit/executor/runcexecutor.(*runcExecutor).Run
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/executor/runcexecutor/executor.go:338
+
+github.com/moby/buildkit/solver/llbsolver/ops.(*ExecOp).Exec
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/llbsolver/ops/exec.go:484
+
+github.com/moby/buildkit/solver.(*sharedOp).Exec.func2
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/jobs.go:1100
+
+github.com/moby/buildkit/util/flightcontrol.(*call[...]).run
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/util/flightcontrol/flightcontrol.go:122
+
+sync.(*Once).doSlow
+
+	/usr/local/go/src/sync/once.go:74
+
+sync.(*Once).Do
+
+	/usr/local/go/src/sync/once.go:65
+
+runtime.goexit
+
+	/usr/local/go/src/runtime/asm_amd64.s:1695
+
+
+
+2646486 v0.17.1 /usr/libexec/docker/cli-plugins/docker-buildx bake --file - --progress rawjson --metadata-file /tmp/compose-build-metadataFile-1720916901.json --allow fs.read=/home/test/site24x7-cli-ai-agent
+
+google.golang.org/grpc.(*ClientConn).Invoke
+
+	google.golang.org/grpc@v1.62.0/call.go:35
+
+github.com/moby/buildkit/api/services/control.(*controlClient).Solve
+
+	github.com/moby/buildkit@v0.16.0/api/services/control/control.pb.go:2261
+
+github.com/moby/buildkit/client.(*Client).solve.func2
+
+	github.com/moby/buildkit@v0.16.0/client/solve.go:269
+
+golang.org/x/sync/errgroup.(*Group).Go.func1
+
+	golang.org/x/sync@v0.7.0/errgroup/errgroup.go:78
+
+runtime.goexit
+
+	runtime/asm_amd64.s:1695
+
+
+
+2763  /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+github.com/moby/buildkit/solver.(*edge).execOp
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/edge.go:979
+
+github.com/moby/buildkit/solver/internal/pipe.NewWithFunction.func2
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/internal/pipe/pipe.go:82
+
+runtime.goexit
+
+	/usr/local/go/src/runtime/asm_amd64.s:1695
+
+
+
+2646486 v0.17.1 /usr/libexec/docker/cli-plugins/docker-buildx bake --file - --progress rawjson --metadata-file /tmp/compose-build-metadataFile-1720916901.json --allow fs.read=/home/test/site24x7-cli-ai-agent
+
+github.com/moby/buildkit/client.(*Client).solve.func2
+
+	github.com/moby/buildkit@v0.16.0/client/solve.go:285
+
+golang.org/x/sync/errgroup.(*Group).Go.func1
+
+	golang.org/x/sync@v0.7.0/errgroup/errgroup.go:78
+
+
+
+2763  /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+github.com/moby/buildkit/solver/llbsolver/ops.(*ExecOp).Exec
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/llbsolver/ops/exec.go:505
+
+github.com/moby/buildkit/solver.(*sharedOp).Exec.func2
+
+	/root/build-deb/engine/vendor/github.com/moby/buildkit/solver/jobs.go:1100
