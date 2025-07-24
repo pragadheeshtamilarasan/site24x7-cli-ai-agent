@@ -88,8 +88,7 @@ class GitHubManager:
         try:
             logger.info(f"Creating new repository: {self.repo_name}")
             
-            user = self.github.get_user()
-            repo = user.create_repo(
+            repo = self.github.get_user().create_repo(
                 name=self.repo_name,
                 description="Site24x7 CLI - Comprehensive monitoring and management tool (AI-maintained)",
                 auto_init=True,
