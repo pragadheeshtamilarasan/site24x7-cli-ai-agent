@@ -151,8 +151,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
 GITHUB_USERNAME=your_github_username
 
-# Site24x7 Configuration (Optional)
-SITE24X7_OAUTH_TOKEN=your_site24x7_token_here
+# Site24x7 Configuration - No authentication needed for documentation scraping
 
 # Security
 SECRET_KEY=your_secret_key_here
@@ -183,11 +182,8 @@ DEBUG=false
 3. Copy the key and add it to your `.env` file
 4. Note: Without this key, AI features will be disabled but the app will still work
 
-#### Site24x7 OAuth Token (Optional)
-1. Log into your Site24x7 account
-2. Go to Admin > Developer > API
-3. Generate OAuth token
-4. Add to your `.env` file
+# Site24x7 Configuration
+No additional authentication is required for Site24x7 documentation scraping as the application only accesses publicly available API documentation.
 
 ### 6. Initialize Database
 The database will be created automatically when you first run the application. No manual setup required.
