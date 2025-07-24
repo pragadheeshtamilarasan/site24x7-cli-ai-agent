@@ -5,15 +5,15 @@
 ### Quick Start (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/deploy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
 ```
 
 This single command will:
 - Install Docker and Docker Compose (if needed)
 - Download the project
-- Create configuration files
 - Build and start the application
-- Provide access URLs and management commands
+- Run immediately - no terminal configuration needed!
+- Configure everything via web UI at http://localhost:5000/config
 
 ### Manual Deployment
 
@@ -33,21 +33,24 @@ chmod +x deploy.sh
 
 ### Configuration
 
-Edit the `.env` file created during deployment:
+**Web UI Configuration (Recommended):**
+1. After deployment, open http://localhost:5000/config
+2. Enter your GitHub Personal Access Token and username
+3. Optionally configure AI settings (OpenAI or Local LLM)
+4. Save configuration
+
+**Manual Configuration (Optional):**
+Edit the `.env` file if needed:
 
 ```env
-# Required GitHub Configuration
+# GitHub Configuration
 GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
 GITHUB_USERNAME=your_github_username
 
-# Optional AI Configuration (choose one)
-# For OpenAI:
-OPENAI_API_KEY=your_openai_api_key_here
-
-# For Local LLM (OpenAI compatible):
-OPENAI_API_KEY=your_local_llm_api_key
-OPENAI_BASE_URL=http://localhost:3100/v1
-USE_LOCAL_LLM=true
+# AI Configuration
+OPENAI_API_KEY=your_api_key_here
+OPENAI_BASE_URL=http://localhost:3100/v1  # For local LLM
+USE_LOCAL_LLM=true  # For local LLM
 ```
 
 ### Access Points
