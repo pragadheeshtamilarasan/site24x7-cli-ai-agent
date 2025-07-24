@@ -72,7 +72,6 @@ def create_env_file():
     
     # Optional settings
     openai_key = input("OpenAI API Key (optional, press Enter to skip): ").strip()
-    site24x7_token = input("Site24x7 OAuth Token (optional, press Enter to skip): ").strip()
     
     # Generate secret key
     secret_key = secrets.token_urlsafe(32)
@@ -88,10 +87,9 @@ GITHUB_PERSONAL_ACCESS_TOKEN={github_token}
 GITHUB_USERNAME={github_username}
 GITHUB_REPO_NAME=site24x7-cli
 
-# Site24x7 Configuration
+# Site24x7 Configuration - Public documentation scraping (no authentication needed)
 SITE24X7_API_BASE=https://www.site24x7.com/api/
 SITE24X7_DOCS_URL=https://www.site24x7.com/help/api/
-{f'SITE24X7_OAUTH_TOKEN={site24x7_token}' if site24x7_token else '# SITE24X7_OAUTH_TOKEN=your_token_here'}
 
 # OpenAI Configuration (AI features disabled without this)
 {f'OPENAI_API_KEY={openai_key}' if openai_key else '# OPENAI_API_KEY=your_key_here'}
