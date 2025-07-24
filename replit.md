@@ -15,7 +15,14 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 
 ## Recent Changes
 
-### Bug Fixes (July 24, 2025)
+### Local LLM Support Added (July 24, 2025)
+- **AI Configuration**: Added support for local LLM with OpenAI API compatibility
+- **Configuration Fields**: Added `openai_base_url`, `use_local_llm`, and dynamic model selection
+- **Web Interface**: Updated configuration page with radio buttons for OpenAI vs Local LLM
+- **Dynamic Configuration**: Form automatically switches between OpenAI and Local LLM fields
+- **Example Support**: Supports endpoints like `http://site24x7-fgpu.csez.zohocorpin.com:3100/v1`
+
+### Previous Bug Fixes (July 24, 2025)
 - **AI Analyzer**: Added graceful handling when OpenAI API key is not provided
 - **Scheduler Service**: Fixed all TaskLogger import issues with proper error handling
 - **GitHub Manager**: Made repository initialization more fault-tolerant
@@ -23,7 +30,7 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 - **Documentation**: Created comprehensive deployment guide and README
 
 ### Architecture Improvements
-- AI features now degrade gracefully without API key
+- AI features now support both OpenAI and local LLM configurations
 - Better error logging and exception handling throughout
 - More resilient startup process
 - Enhanced documentation for local deployment
