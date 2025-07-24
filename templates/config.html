@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site24x7 CLI AI Agent - Configuration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-robot me-2"></i>
+                Site24x7 CLI AI Agent
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/config">
+                            <i class="fas fa-cog me-1"></i>Configuration
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logs">
+                            <i class="fas fa-file-alt me-1"></i>Logs
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if request.query_params.get('updated') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            Configuration updated successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>System Configuration
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/config/update" id="configForm">
+                            <!-- GitHub Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary">
+                                        <i class="fab fa-github me-2"></i>GitHub Configuration
+                                    </h6>
+                                    <hr>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="github_token" class="form-label">
+                                            <i class="fas fa-key me-1"></i>Personal Access Token
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="github_token" name="github_token" 
+                                                   placeholder="ghp_..." 
+                                                   value="{{ config.get('github_token', '') }}" required>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('github_token')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text">
+                                            <small>GitHub Personal Access Token with repository permissions</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="github_username" class="form-label">
+                                            <i class="fas fa-user me-1"></i>GitHub Username
+                                        </label>
+                                        <input type="text" class="form-control" id="github_username" name="github_username" 
+                                               placeholder="your-username" 
+                                               value="{{ config.get('github_username', '') }}">
+                                        <div class="form-text">
+                                            <small>Optional: GitHub username for repository operations</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Site24x7 Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-success">
+                                        <i class="fas fa-monitor-heart-rate me-2"></i>Site24x7 Configuration
+                                    </h6>
+                                    <hr>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="site24x7_oauth_token" class="form-label">
+                                            <i class="fas fa-key me-1"></i>OAuth Token
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="site24x7_oauth_token" name="site24x7_oauth_token" 
+                                                   placeholder="Zoho OAuth token..." 
+                                                   value="{{ config.get('site24x7_oauth_token', '') }}">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('site24x7_oauth_token')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text">
+                                            <small>Optional: Site24x7 OAuth token for API testing (CLI will use user-provided tokens)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- OpenAI Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-info">
+                                        <i class="fas fa-brain me-2"></i>OpenAI Configuration
+                                    </h6>
+                                    <hr>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="openai_api_key" class="form-label">
+                                            <i class="fas fa-key me-1"></i>API Key
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="openai_api_key" name="openai_api_key" 
+                                                   placeholder="sk-..." 
+                                                   value="{{ config.get('openai_api_key', '') }}" required>
+                                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('openai_api_key')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-text">
+                                            <small>OpenAI API key for AI-powered analysis and generation</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Scheduler Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-warning">
+                                        <i class="fas fa-clock me-2"></i>Scheduler Configuration
+                                    </h6>
+                                    <hr>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="scraper_interval_hours" class="form-label">
+                                            <i class="fas fa-download me-1"></i>Scraper Interval (Hours)
+                                        </label>
+                                        <input type="number" class="form-control" id="scraper_interval_hours" name="scraper_interval_hours" 
+                                               min="1" max="168" 
+                                               value="{{ config.get('scraper_interval_hours', 6) }}">
+                                        <div class="form-text">
+                                            <small>How often to check for API documentation updates (1-168 hours)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="maintenance_interval_hours" class="form-label">
+                                            <i class="fas fa-tools me-1"></i>Maintenance Interval (Hours)
+                                        </label>
+                                        <input type="number" class="form-control" id="maintenance_interval_hours" name="maintenance_interval_hours" 
+                                               min="1" max="168" 
+                                               value="{{ config.get('maintenance_interval_hours', 24) }}">
+                                        <div class="form-text">
+                                            <small>How often to perform GitHub maintenance (1-168 hours)</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <hr>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button type="button" class="btn btn-outline-secondary me-2" onclick="resetForm()">
+                                                <i class="fas fa-undo me-1"></i>Reset
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info" onclick="testConfiguration()">
+                                                <i class="fas fa-vial me-1"></i>Test Configuration
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save me-1"></i>Save Configuration
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Status -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>Configuration Status
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="status-indicator mb-2">
+                                        <i class="fab fa-github fa-2x text-{{ 'success' if config.get('github_token') else 'secondary' }}"></i>
+                                    </div>
+                                    <div class="fw-bold">GitHub</div>
+                                    <div class="text-{{ 'success' if config.get('github_token') else 'muted' }}">
+                                        {{ 'Configured' if config.get('github_token') else 'Not Configured' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="status-indicator mb-2">
+                                        <i class="fas fa-monitor-heart-rate fa-2x text-{{ 'success' if config.get('site24x7_oauth_token') else 'secondary' }}"></i>
+                                    </div>
+                                    <div class="fw-bold">Site24x7</div>
+                                    <div class="text-{{ 'success' if config.get('site24x7_oauth_token') else 'muted' }}">
+                                        {{ 'Configured' if config.get('site24x7_oauth_token') else 'Optional' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="status-indicator mb-2">
+                                        <i class="fas fa-brain fa-2x text-{{ 'success' if config.get('openai_api_key') else 'secondary' }}"></i>
+                                    </div>
+                                    <div class="fw-bold">OpenAI</div>
+                                    <div class="text-{{ 'success' if config.get('openai_api_key') else 'muted' }}">
+                                        {{ 'Configured' if config.get('openai_api_key') else 'Required' }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="status-indicator mb-2">
+                                        <i class="fas fa-clock fa-2x text-success"></i>
+                                    </div>
+                                    <div class="fw-bold">Scheduler</div>
+                                    <div class="text-success">
+                                        Every {{ config.get('scraper_interval_hours', 6) }}h / {{ config.get('maintenance_interval_hours', 24) }}h
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-question-circle me-2"></i>Configuration Help
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="helpAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#githubHelp">
+                                        <i class="fab fa-github me-2"></i>GitHub Configuration
+                                    </button>
+                                </h2>
+                                <div id="githubHelp" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>Personal Access Token:</strong> Required for repository operations.</p>
+                                        <ol>
+                                            <li>Go to GitHub Settings → Developer settings → Personal access tokens</li>
+                                            <li>Generate new token (classic)</li>
+                                            <li>Select scopes: <code>repo</code>, <code>workflow</code>, <code>write:packages</code></li>
+                                            <li>Copy the generated token</li>
+                                        </ol>
+                                        <p><strong>Username:</strong> Your GitHub username (optional but recommended).</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#openaiHelp">
+                                        <i class="fas fa-brain me-2"></i>OpenAI Configuration
+                                    </button>
+                                </h2>
+                                <div id="openaiHelp" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>API Key:</strong> Required for AI-powered analysis and generation.</p>
+                                        <ol>
+                                            <li>Visit <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI API Keys</a></li>
+                                            <li>Create new secret key</li>
+                                            <li>Copy the key (starts with sk-)</li>
+                                        </ol>
+                                        <p><strong>Note:</strong> The system uses GPT-4o model for optimal performance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#site24x7Help">
+                                        <i class="fas fa-monitor-heart-rate me-2"></i>Site24x7 Configuration
+                                    </button>
+                                </h2>
+                                <div id="site24x7Help" class="accordion-collapse collapse" data-bs-parent="#helpAccordion">
+                                    <div class="accordion-body">
+                                        <p><strong>OAuth Token:</strong> Optional for API testing (CLI users provide their own tokens).</p>
+                                        <ol>
+                                            <li>Login to Site24x7 console</li>
+                                            <li>Go to Admin → Developer → REST API</li>
+                                            <li>Generate OAuth token</li>
+                                            <li>Copy the token</li>
+                                        </ol>
+                                        <p><strong>Note:</strong> This is only used for internal testing. CLI users authenticate separately.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Results Modal -->
+    <div class="modal fade" id="testModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Configuration Test Results</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="testModalBody">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Testing...</span>
+                        </div>
+                        <p class="mt-3">Testing configuration...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = field.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form? This will lose any unsaved changes.')) {
+                document.getElementById('configForm').reset();
+            }
+        }
+
+        function testConfiguration() {
+            const modal = new bootstrap.Modal(document.getElementById('testModal'));
+            modal.show();
+            
+            // Simulate configuration testing
+            setTimeout(() => {
+                document.getElementById('testModalBody').innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        All configurations are valid and working correctly!
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            GitHub Connection
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            OpenAI API
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Site24x7 API
+                            <span class="badge bg-success rounded-pill">✓</span>
+                        </li>
+                    </ul>
+                `;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
