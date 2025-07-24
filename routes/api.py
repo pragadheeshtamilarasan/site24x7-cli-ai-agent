@@ -108,33 +108,45 @@ async def get_configuration():
         raise HTTPException(status_code=500, detail="Configuration unavailable")
 
 @router.put("/config")
-async def update_configuration(config_update: ConfigUpdate):
+async def update_configuration(config_update: dict):
     """Update system configuration"""
     try:
         updated_fields = []
         
-        if config_update.github_token is not None:
-            ConfigurationManager.set("github_token", config_update.github_token)
+        if config_update.get("github_token") is not None:
+            ConfigurationManager.set("github_token", config_update.get("github_token"))
             updated_fields.append("github_token")
         
-        if config_update.github_username is not None:
-            ConfigurationManager.set("github_username", config_update.github_username)
+        if config_update.get("github_username") is not None:
+            ConfigurationManager.set("github_username", config_update.get("github_username"))
             updated_fields.append("github_username")
         
-        if config_update.site24x7_oauth_token is not None:
-            ConfigurationManager.set("site24x7_oauth_token", config_update.site24x7_oauth_token)
+        if config_update.get("site24x7_oauth_token") is not None:
+            ConfigurationManager.set("site24x7_oauth_token", config_update.get("site24x7_oauth_token"))
             updated_fields.append("site24x7_oauth_token")
         
-        if config_update.openai_api_key is not None:
-            ConfigurationManager.set("openai_api_key", config_update.openai_api_key)
+        if config_update.get("openai_api_key") is not None:
+            ConfigurationManager.set("openai_api_key", config_update.get("openai_api_key"))
             updated_fields.append("openai_api_key")
         
-        if config_update.scraper_interval_hours is not None:
-            ConfigurationManager.set("scraper_interval_hours", config_update.scraper_interval_hours)
+        if config_update.get("openai_model") is not None:
+            ConfigurationManager.set("openai_model", config_update.get("openai_model"))
+            updated_fields.append("openai_model")
+        
+        if config_update.get("openai_base_url") is not None:
+            ConfigurationManager.set("openai_base_url", config_update.get("openai_base_url"))
+            updated_fields.append("openai_base_url")
+        
+        if config_update.get("use_local_llm") is not None:
+            ConfigurationManager.set("use_local_llm", config_update.get("use_local_llm"))
+            updated_fields.append("use_local_llm")
+        
+        if config_update.get("scraper_interval_hours") is not None:
+            ConfigurationManager.set("scraper_interval_hours", config_update.get("scraper_interval_hours"))
             updated_fields.append("scraper_interval_hours")
         
-        if config_update.maintenance_interval_hours is not None:
-            ConfigurationManager.set("maintenance_interval_hours", config_update.maintenance_interval_hours)
+        if config_update.get("maintenance_interval_hours") is not None:
+            ConfigurationManager.set("maintenance_interval_hours", config_update.get("maintenance_interval_hours"))
             updated_fields.append("maintenance_interval_hours")
         
         # Log configuration update
