@@ -73,6 +73,11 @@ async def update_config(
     github_username: str = Form(None),
     site24x7_oauth_token: str = Form(None),
     openai_api_key: str = Form(None),
+    openai_model_standard: str = Form("gpt-4o"),
+    openai_base_url: str = Form(None),
+    openai_model_local: str = Form(None),
+    local_llm_api_key: str = Form(None),
+    use_local_llm: str = Form("false"),
     scraper_interval_hours: int = Form(6),
     maintenance_interval_hours: int = Form(24)
 ):
@@ -88,8 +93,24 @@ async def update_config(
         if site24x7_oauth_token:
             ConfigurationManager.set("site24x7_oauth_token", site24x7_oauth_token)
         
-        if openai_api_key:
-            ConfigurationManager.set("openai_api_key", openai_api_key)
+        # Handle AI configuration based on LLM type
+        use_local = use_local_llm.lower() == "true"
+        ConfigurationManager.set("use_local_llm", use_local)
+        
+        if use_local:
+            # Local LLM configuration
+            if local_llm_api_key:
+                ConfigurationManager.set("openai_api_key", local_llm_api_key)
+            if openai_model_local:
+                ConfigurationManager.set("openai_model", openai_model_local)
+            if openai_base_url:
+                ConfigurationManager.set("openai_base_url", openai_base_url)
+        else:
+            # OpenAI configuration
+            if openai_api_key:
+                ConfigurationManager.set("openai_api_key", openai_api_key)
+            ConfigurationManager.set("openai_model", openai_model_standard)
+            ConfigurationManager.set("openai_base_url", "")  # Clear base URL for OpenAI
         
         ConfigurationManager.set("scraper_interval_hours", scraper_interval_hours)
         ConfigurationManager.set("maintenance_interval_hours", maintenance_interval_hours)
