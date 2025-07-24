@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site24x7 CLI AI Agent - Logs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-robot me-2"></i>
+                Site24x7 CLI AI Agent
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/config">
+                            <i class="fas fa-cog me-1"></i>Configuration
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/logs">
+                            <i class="fas fa-file-alt me-1"></i>Logs
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <select class="form-select form-select-sm me-2" id="limitSelect" onchange="updateLimit()">
+                        <option value="50" {{ 'selected' if limit == 50 else '' }}>50 entries</option>
+                        <option value="100" {{ 'selected' if limit == 100 else '' }}>100 entries</option>
+                        <option value="200" {{ 'selected' if limit == 200 else '' }}>200 entries</option>
+                        <option value="500" {{ 'selected' if limit == 500 else '' }}>500 entries</option>
+                    </select>
+                    <button class="btn btn-sm btn-outline-light" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Log Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Total Logs</h5>
+                                <h3 class="mb-0">{{ task_logs|length + github_ops|length }}</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-file-alt fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Successful</h5>
+                                <h3 class="mb-0">{{ (task_logs + github_ops)|selectattr('status', 'equalto', 'completed')|list|length }}</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">Failed</h5>
+                                <h3 class="mb-0">{{ (task_logs + github_ops)|selectattr('status', 'equalto', 'failed')|list|length }}</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-times-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title">In Progress</h5>
+                                <h3 class="mb-0">{{ (task_logs + github_ops)|selectattr('status', 'equalto', 'started')|list|length }}</h3>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-spinner fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-filter me-2"></i>Filters
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select class="form-select" id="statusFilter" onchange="applyFilters()">
+                                    <option value="">All Statuses</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="failed">Failed</option>
+                                    <option value="started">Started</option>
+                                    <option value="no_changes">No Changes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="typeFilter" class="form-label">Type</label>
+                                <select class="form-select" id="typeFilter" onchange="applyFilters()">
+                                    <option value="">All Types</option>
+                                    <option value="api_scraper">API Scraper</option>
+                                    <option value="cli_generator">CLI Generator</option>
+                                    <option value="github_manager">GitHub Manager</option>
+                                    <option value="scheduler">Scheduler</option>
+                                    <option value="configuration">Configuration</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="sourceFilter" class="form-label">Source</label>
+                                <select class="form-select" id="sourceFilter" onchange="applyFilters()">
+                                    <option value="">All Sources</option>
+                                    <option value="task">Task Logs</option>
+                                    <option value="github">GitHub Operations</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="searchFilter" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Search messages..." onkeyup="applyFilters()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Logs -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-tasks me-2"></i>Task Logs
+                        </h5>
+                        <span class="badge bg-primary">{{ task_logs|length }} entries</span>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if task_logs %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="taskLogsTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="10%">Status</th>
+                                        <th width="15%">Task Type</th>
+                                        <th width="40%">Message</th>
+                                        <th width="20%">Timestamp</th>
+                                        <th width="15%">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for log in task_logs %}
+                                    <tr class="log-row" data-status="{{ log.status }}" data-type="{{ log.task_type }}" data-source="task">
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if log.status == 'completed' else 'danger' if log.status == 'failed' else 'primary' if log.status == 'started' else 'warning' }}">
+                                                <i class="fas fa-{{ 'check' if log.status == 'completed' else 'times' if log.status == 'failed' else 'play' if log.status == 'started' else 'info' }} me-1"></i>
+                                                {{ log.status.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium">{{ log.task_type.replace('_', ' ').title() }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="message-cell">
+                                                {{ log.message or 'No message' }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ log.created_at[:19].replace('T', ' ') }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if log.details %}
+                                            <button class="btn btn-sm btn-outline-primary" onclick="showDetails('{{ log.id }}', 'task', {{ log.details|tojson }})">
+                                                <i class="fas fa-info-circle me-1"></i>Details
+                                            </button>
+                                            {% else %}
+                                            <span class="text-muted">No details</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center p-4 text-muted">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <h5>No Task Logs Available</h5>
+                            <p>Task logs will appear here once the system starts performing operations.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GitHub Operations -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fab fa-github me-2"></i>GitHub Operations
+                        </h5>
+                        <span class="badge bg-primary">{{ github_ops|length }} entries</span>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if github_ops %}
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="githubOpsTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="10%">Status</th>
+                                        <th width="15%">Operation</th>
+                                        <th width="30%">Message</th>
+                                        <th width="15%">Commit</th>
+                                        <th width="15%">Timestamp</th>
+                                        <th width="15%">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for op in github_ops %}
+                                    <tr class="log-row" data-status="{{ op.status }}" data-type="{{ op.operation_type }}" data-source="github">
+                                        <td>
+                                            <span class="badge bg-{{ 'success' if op.status == 'completed' else 'danger' if op.status == 'failed' else 'primary' }}">
+                                                <i class="fas fa-{{ 'check' if op.status == 'completed' else 'times' if op.status == 'failed' else 'play' }} me-1"></i>
+                                                {{ op.status.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="fw-medium">{{ op.operation_type.replace('_', ' ').title() }}</span>
+                                        </td>
+                                        <td>
+                                            <div class="message-cell">
+                                                {{ op.message or 'No message' }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if op.commit_sha %}
+                                            <code class="small">{{ op.commit_sha[:8] }}</code>
+                                            {% else %}
+                                            <span class="text-muted">N/A</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock me-1"></i>
+                                                {{ op.created_at[:19].replace('T', ' ') }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if op.details %}
+                                            <button class="btn btn-sm btn-outline-primary" onclick="showDetails('{{ op.id }}', 'github', {{ op.details|tojson }})">
+                                                <i class="fas fa-info-circle me-1"></i>Details
+                                            </button>
+                                            {% else %}
+                                            <span class="text-muted">No details</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center p-4 text-muted">
+                            <i class="fab fa-github fa-3x mb-3"></i>
+                            <h5>No GitHub Operations</h5>
+                            <p>GitHub operations will appear here once the system starts interacting with the repository.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div class="modal fade" id="detailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailsModalTitle">Log Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailsModalBody">
+                    <!-- Details content will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+    <script>
+        function updateLimit() {
+            const limit = document.getElementById('limitSelect').value;
+            window.location.href = `/logs?limit=${limit}`;
+        }
+
+        function refreshLogs() {
+            window.location.reload();
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value.toLowerCase();
+            const sourceFilter = document.getElementById('sourceFilter').value.toLowerCase();
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            const rows = document.querySelectorAll('.log-row');
+            
+            rows.forEach(row => {
+                const status = row.dataset.status.toLowerCase();
+                const type = row.dataset.type.toLowerCase();
+                const source = row.dataset.source.toLowerCase();
+                const message = row.querySelector('.message-cell').textContent.toLowerCase();
+
+                const statusMatch = !statusFilter || status.includes(statusFilter);
+                const typeMatch = !typeFilter || type.includes(typeFilter);
+                const sourceMatch = !sourceFilter || source.includes(sourceFilter);
+                const searchMatch = !searchFilter || message.includes(searchFilter);
+
+                if (statusMatch && typeMatch && sourceMatch && searchMatch) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function showDetails(id, type, details) {
+            const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+            const title = document.getElementById('detailsModalTitle');
+            const body = document.getElementById('detailsModalBody');
+
+            title.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Log Details - ID: ${id}`;
+            
+            if (details && typeof details === 'object') {
+                body.innerHTML = `
+                    <div class="bg-light p-3 rounded">
+                        <pre class="mb-0"><code>${JSON.stringify(details, null, 2)}</code></pre>
+                    </div>
+                `;
+            } else if (details) {
+                body.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        ${details}
+                    </div>
+                `;
+            } else {
+                body.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        No detailed information available for this log entry.
+                    </div>
+                `;
+            }
+
+            modal.show();
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshLogs, 30000);
+    </script>
+</body>
+</html>
