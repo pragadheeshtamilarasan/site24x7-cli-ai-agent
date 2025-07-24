@@ -11,7 +11,12 @@ from datetime import datetime
 import base64
 
 from github import Github, GithubException
-import git
+try:
+    import git
+    GIT_AVAILABLE = True
+except ImportError:
+    git = None
+    GIT_AVAILABLE = False
 
 from config import settings
 from database import GitHubOperationLogger, TaskLogger
