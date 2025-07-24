@@ -20,7 +20,7 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 - **Configuration Fields**: Added `openai_base_url`, `use_local_llm`, and dynamic model selection
 - **Web Interface**: Updated configuration page with radio buttons for OpenAI vs Local LLM
 - **Dynamic Configuration**: Form automatically switches between OpenAI and Local LLM fields
-- **Example Support**: Supports endpoints like `http://site24x7-fgpu.csez.zohocorpin.com:3100/v1`
+- **Example Support**: Supports local LLM endpoints with OpenAI API compatibility
 
 ### Previous Bug Fixes (July 24, 2025)
 - **AI Analyzer**: Added graceful handling when OpenAI API key is not provided
