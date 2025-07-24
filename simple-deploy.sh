@@ -66,13 +66,24 @@ EOF
 # Create data directory
 mkdir -p data
 
-# Build the application
+# Build the application (try minimal version first for network issues)
 echo -e "${BLUE}🔨 Building application...${NC}"
-docker-compose build --no-cache
+if ! docker-compose -f docker-compose.minimal.yml build --no-cache; then
+    echo -e "${YELLOW}⚠️  Minimal build failed, trying standard build...${NC}"
+    docker-compose build --no-cache || {
+        echo -e "${RED}❌ Docker build failed due to network connectivity${NC}"
+        echo -e "${YELLOW}This might be due to corporate firewall or network restrictions${NC}"
+        echo -e "${YELLOW}Try running from a different network or contact your network administrator${NC}"
+        exit 1
+    }
+    COMPOSE_FILE="docker-compose.yml"
+else
+    COMPOSE_FILE="docker-compose.minimal.yml"
+fi
 
 # Start the application
 echo -e "${BLUE}🚀 Starting Site24x7 CLI AI Agent...${NC}"
-docker-compose up -d
+docker-compose -f "$COMPOSE_FILE" up -d
 
 # Wait for startup
 echo -e "${YELLOW}⏳ Starting up...${NC}"
@@ -98,12 +109,12 @@ if curl -f http://localhost:5000/api/v1/status > /dev/null 2>&1; then
     echo "Create token with: repo, workflow, write:packages scopes"
     echo
     echo -e "${BLUE}📊 Management commands:${NC}"
-    echo -e "   View logs: ${YELLOW}docker-compose logs -f${NC}"
-    echo -e "   Stop: ${YELLOW}docker-compose down${NC}"
-    echo -e "   Restart: ${YELLOW}docker-compose restart${NC}"
+    echo -e "   View logs: ${YELLOW}docker-compose -f $COMPOSE_FILE logs -f${NC}"
+    echo -e "   Stop: ${YELLOW}docker-compose -f $COMPOSE_FILE down${NC}"
+    echo -e "   Restart: ${YELLOW}docker-compose -f $COMPOSE_FILE restart${NC}"
 else
     echo -e "${RED}❌ Application failed to start${NC}"
-    echo -e "${YELLOW}Check logs: docker-compose logs${NC}"
+    echo -e "${YELLOW}Check logs: docker-compose -f $COMPOSE_FILE logs${NC}"
     exit 1
 fi
 
