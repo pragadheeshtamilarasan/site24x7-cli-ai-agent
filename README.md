@@ -4,6 +4,30 @@ An autonomous AI-powered system that scrapes Site24x7 API documentation, generat
 
 ## 🚀 Quick Start
 
+### 🐳 Docker Deployment (Recommended)
+
+**One-line deployment for Ubuntu:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/deploy.sh | bash
+```
+
+This command automatically:
+- Installs Docker and Docker Compose (if needed)
+- Downloads and builds the application
+- Creates configuration files
+- Starts the service on port 5000
+
+**Access Points:**
+- Dashboard: http://localhost:5000
+- Configuration: http://localhost:5000/config
+- Logs: http://localhost:5000/logs
+
+For detailed Docker deployment instructions, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)
+
+---
+
+### 🐍 Manual Python Installation
+
 ### Prerequisites
 - Python 3.11+
 - Git
@@ -159,6 +183,7 @@ site24x7-cli-ai-agent/
 ├── config.py                  # Configuration management
 ├── database.py                # Database models and managers
 ├── DEPLOYMENT.md              # Detailed deployment guide
+├── DOCKER_DEPLOYMENT.md       # Docker deployment guide
 ├── README.md                  # This file
 │
 ├── services/                  # Core business logic
@@ -318,6 +343,66 @@ CMD ["python", "main.py"]
 - CLI generation times
 - GitHub operation statistics
 - System resource usage
+
+## 📖 Help Documentation
+
+This project includes comprehensive documentation to help you get started:
+
+### 📋 Available Guides
+
+| Document | Description | Use Case |
+|----------|-------------|----------|
+| **[README.md](README.md)** | Main documentation with setup instructions | First-time users, overview |
+| **[DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)** | Docker deployment guide with one-line command | Quick deployment on Ubuntu |
+| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Detailed manual deployment instructions | Advanced setup, troubleshooting |
+| **[REQUIREMENTS.md](REQUIREMENTS.md)** | Technical requirements and dependencies | System administrators |
+
+### 🚀 Quick Access Commands
+
+**Docker Deployment (Ubuntu):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/deploy.sh | bash
+```
+
+**Check Application Status:**
+```bash
+curl http://localhost:5000/api/v1/status
+```
+
+**View Live Logs:**
+```bash
+# Docker deployment
+docker-compose logs -f
+
+# Manual deployment  
+tail -f site24x7_agent.log
+```
+
+### 🔧 Configuration Help
+
+**Web Interface:**
+- Configuration: http://localhost:5000/config
+- Dashboard: http://localhost:5000/dashboard
+- Logs: http://localhost:5000/logs
+
+**Environment Variables:**
+- GitHub token setup instructions in main README
+- AI configuration (OpenAI/Local LLM) in configuration section
+- All variables documented in environment table
+
+### 🆘 Getting Help
+
+1. **Check Status**: Visit http://localhost:5000/api/v1/status
+2. **View Logs**: Check application logs for error details
+3. **Documentation**: Review appropriate guide based on your setup
+4. **Configuration**: Verify all required environment variables are set
+
+### 📞 Support Resources
+
+- **GitHub Issues**: Report bugs or request features
+- **Documentation**: Comprehensive guides for all deployment types
+- **Health Checks**: Built-in monitoring and diagnostics
+- **Log Analysis**: Detailed logging for troubleshooting
 
 ## 🤝 Contributing
 
