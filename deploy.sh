@@ -37,10 +37,23 @@ fi
 # Create .env file if it doesn't exist
 if [ ! -f .env ]; then
     echo -e "${YELLOW}📝 Creating environment configuration...${NC}"
-    cat > .env << 'EOF'
+    
+    # Prompt for GitHub credentials
+    echo -e "${BLUE}GitHub Configuration Required:${NC}"
+    echo "You need a GitHub Personal Access Token to proceed."
+    echo "Get one at: https://github.com/settings/tokens"
+    echo
+    
+    read -p "Enter your GitHub username: " GITHUB_USER
+    echo -n "Enter your GitHub Personal Access Token: "
+    read -s GITHUB_TOKEN
+    echo
+    
+    # Create .env file with user input
+    cat > .env << EOF
 # Required: GitHub Configuration
-GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
-GITHUB_USERNAME=your_github_username
+GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_TOKEN}
+GITHUB_USERNAME=${GITHUB_USER}
 
 # Optional: AI Configuration (choose one)
 # For OpenAI:
@@ -58,9 +71,8 @@ MAINTENANCE_INTERVAL_HOURS=24
 LOG_LEVEL=INFO
 DEBUG=false
 EOF
-    echo -e "${YELLOW}⚠️  Please edit .env file with your GitHub token and username${NC}"
-    echo -e "${YELLOW}    Run: nano .env${NC}"
-    read -p "Press Enter after updating .env file..."
+    
+    echo -e "${GREEN}✅ Configuration saved to .env file${NC}"
 fi
 
 # Create data directory
