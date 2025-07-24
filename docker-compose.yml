@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  site24x7-agent:
+    build: .
+    container_name: site24x7-cli-agent
+    ports:
+      - "5000:5000"
+    environment:
+      # Required GitHub Configuration
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
+      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      
+      # Optional AI Configuration (choose one)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - USE_LOCAL_LLM=${USE_LOCAL_LLM:-false}
+      
+      # Application Settings
+      - SECRET_KEY=${SECRET_KEY:-auto-generated}
+      - SCRAPER_INTERVAL_HOURS=${SCRAPER_INTERVAL_HOURS:-6}
+      - MAINTENANCE_INTERVAL_HOURS=${MAINTENANCE_INTERVAL_HOURS:-24}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DEBUG=${DEBUG:-false}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
