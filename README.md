@@ -8,14 +8,14 @@ An autonomous AI-powered system that scrapes Site24x7 API documentation, generat
 
 **One-line deployment for Ubuntu:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/deploy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
 ```
 
 This command automatically:
 - Installs Docker and Docker Compose (if needed)
 - Downloads and builds the application
-- Creates configuration files
 - Starts the service on port 5000
+- No terminal configuration needed - configure via web UI!
 
 **Access Points:**
 - Dashboard: http://localhost:5000
@@ -361,7 +361,7 @@ This project includes comprehensive documentation to help you get started:
 
 **Docker Deployment (Ubuntu):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/deploy.sh | bash
+curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
 ```
 
 **Check Application Status:**
