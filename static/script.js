@@ -530,6 +530,27 @@ function throttle(func, limit) {
     };
 }
 
+/**
+ * Toggle between OpenAI and Local LLM configuration
+ */
+function toggleLLMConfig() {
+    const useOpenAI = document.getElementById('use_openai').checked;
+    const useLocalLLM = document.getElementById('use_local_llm').checked;
+    const openaiConfig = document.getElementById('openai_config');
+    const localLLMConfig = document.getElementById('local_llm_config');
+    const hiddenField = document.getElementById('use_local_llm_hidden');
+    
+    if (useOpenAI) {
+        openaiConfig.classList.remove('collapse');
+        localLLMConfig.classList.add('collapse');
+        hiddenField.value = 'false';
+    } else if (useLocalLLM) {
+        openaiConfig.classList.add('collapse');
+        localLLMConfig.classList.remove('collapse');
+        hiddenField.value = 'true';
+    }
+}
+
 // Export functions for global use
 window.Site24x7Agent = {
     refreshStatus,
@@ -542,5 +563,6 @@ window.Site24x7Agent = {
     copyToClipboard,
     downloadData,
     formatTimestamp,
-    formatFileSize
+    formatFileSize,
+    toggleLLMConfig
 };
