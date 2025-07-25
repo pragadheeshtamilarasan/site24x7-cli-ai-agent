@@ -37,11 +37,11 @@ RUN mkdir -p /app/data && \
     chmod +x /app/main.py
 
 # Expose port
-EXPOSE 5000
+EXPOSE 5545
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:5000/api/v1/status || exit 1
+    CMD curl -f http://localhost:5545/api/v1/status || exit 1
 
 # Run the application
 CMD ["python", "main.py"]
