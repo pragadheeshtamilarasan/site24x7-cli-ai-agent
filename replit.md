@@ -18,7 +18,7 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 - Resolved TaskLogger import errors throughout scheduler service
 - Made GitHub initialization fault-tolerant with optional git
 - Disabled blocking initial tasks to ensure quick startup
-- Application now runs stably on port 5000 with all services active
+- Application now runs stably on port 5545 with all services active
 
 ## Recent Changes
 
