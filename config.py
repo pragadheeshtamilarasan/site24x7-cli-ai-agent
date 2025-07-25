@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     
     # Security
     secret_key: str = Field(default_factory=lambda: os.getenv("SECRET_KEY", "site24x7-cli-agent-secret-key"))
+    github_webhook_secret: str = Field(default_factory=lambda: os.getenv("GITHUB_WEBHOOK_SECRET", ""))
     
     # Logging
     log_level: str = Field(default="INFO")
