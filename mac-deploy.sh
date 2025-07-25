@@ -135,16 +135,25 @@ case $choice in
         if [ ! -d "venv" ]; then
             echo "Creating virtual environment..."
             python3 -m venv venv
+            if [ $? -ne 0 ]; then
+                echo "❌ Failed to create virtual environment"
+                exit 1
+            fi
         fi
         
         # Activate virtual environment
         echo "Activating virtual environment..."
-        source venv/bin/activate
+        if [ -f "venv/bin/activate" ]; then
+            source venv/bin/activate
+        else
+            echo "❌ Virtual environment activation failed"
+            exit 1
+        fi
         
         # Install dependencies
         echo "Installing dependencies..."
-        pip install --upgrade pip
-        pip install fastapi uvicorn[standard] pydantic pydantic-settings jinja2 python-multipart requests beautifulsoup4 trafilatura openai pygithub gitpython apscheduler
+        python -m pip install --upgrade pip
+        python -m pip install fastapi "uvicorn[standard]" pydantic pydantic-settings jinja2 python-multipart requests beautifulsoup4 trafilatura openai pygithub gitpython apscheduler
         
         # Start the application
         echo ""
