@@ -94,6 +94,8 @@ async def update_config(request: Request):
             'openai_api_key': 'openai_api_key',
             'openai_model': 'openai_model',
             'openai_base_url': 'openai_base_url',
+            'local_api_key': 'local_api_key',
+            'local_model': 'local_model',
             'site24x7_docs_url': 'site24x7_docs_url',
             'scraper_interval_hours': 'scraper_interval_hours',
             'maintenance_interval_hours': 'maintenance_interval_hours',
@@ -144,6 +146,32 @@ async def update_config(request: Request):
             "configs": configs,
             "error_message": f"Failed to update configuration: {str(e)}"
         })
+
+@router.get("/logs", response_class=HTMLResponse)
+async def logs_page(request: Request):
+    """System logs and workflow errors page"""
+    try:
+        # Get task logs (including errors)
+        task_logs = TaskLogger.get_recent_logs(100)
+        
+        # Get GitHub operations
+        github_ops = GitHubOperationLogger.get_recent_operations(50)
+        
+        # Get system status
+        system_status = await _get_system_status()
+        
+        context = {
+            "request": request,
+            "task_logs": task_logs,
+            "github_ops": github_ops,
+            "system_status": system_status
+        }
+        
+        return templates.TemplateResponse("logs.html", context)
+        
+    except Exception as e:
+        logger.error(f"Logs page error: {e}")
+        raise HTTPException(status_code=500, detail="Logs page unavailable")
 
 @router.post("/config/update")
 async def update_config_legacy(
