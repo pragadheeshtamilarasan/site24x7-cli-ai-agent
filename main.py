@@ -17,6 +17,7 @@ from database import init_db
 from services.scheduler import SchedulerService
 from routes.dashboard import router as dashboard_router
 from routes.api import router as api_router
+from routes.webhooks import router as webhook_router
 
 # Configure logging
 logging.basicConfig(
@@ -83,6 +84,7 @@ templates = Jinja2Templates(directory="templates")
 # Include routers
 app.include_router(dashboard_router, prefix="", tags=["dashboard"])
 app.include_router(api_router, prefix="/api/v1", tags=["api"])
+app.include_router(webhook_router, prefix="", tags=["webhooks"])
 
 @app.get("/")
 async def root(request: Request):
