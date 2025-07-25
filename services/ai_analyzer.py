@@ -18,30 +18,43 @@ class AIAnalyzer:
     """AI-powered analysis service using OpenAI"""
     
     def __init__(self):
-        self.openai_api_key = settings.openai_api_key
-        self.client = None
-        self.model = settings.openai_model  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        self.base_url = settings.openai_base_url
         self.use_local_llm = settings.use_local_llm
+        self.base_url = settings.openai_base_url
+        self.client = None
         
-        if self.openai_api_key:
-            try:
-                if self.use_local_llm and self.base_url:
+        if self.use_local_llm:
+            # Configure for local LLM
+            self.api_key = settings.local_api_key or "dummy-key"  # Some local LLMs don't need real keys
+            self.model = settings.local_model
+            
+            if self.base_url:
+                try:
                     logger.info(f"Initializing local LLM client with base URL: {self.base_url}")
                     self.client = OpenAI(
-                        api_key=self.openai_api_key,
+                        api_key=self.api_key,
                         base_url=self.base_url
                     )
                     logger.info(f"Local LLM client initialized successfully with model: {self.model}")
-                else:
-                    logger.info("Initializing OpenAI client")
-                    self.client = OpenAI(api_key=self.openai_api_key)
-                    logger.info("OpenAI client initialized successfully")
-            except Exception as e:
-                logger.error(f"Failed to initialize AI client: {e}")
-                self.client = None
+                except Exception as e:
+                    logger.error(f"Failed to initialize local LLM client: {e}")
+                    self.client = None
+            else:
+                logger.warning("Local LLM selected but no base URL provided - AI features will be disabled")
         else:
-            logger.warning("AI API key not provided - AI features will be disabled")
+            # Configure for OpenAI
+            self.api_key = settings.openai_api_key
+            self.model = settings.openai_model
+            
+            if self.api_key:
+                try:
+                    logger.info("Initializing OpenAI client")
+                    self.client = OpenAI(api_key=self.api_key)
+                    logger.info("OpenAI client initialized successfully")
+                except Exception as e:
+                    logger.error(f"Failed to initialize OpenAI client: {e}")
+                    self.client = None
+            else:
+                logger.warning("AI API key not provided - AI features will be disabled")
     
     def is_available(self) -> bool:
         """Check if AI services are available"""
