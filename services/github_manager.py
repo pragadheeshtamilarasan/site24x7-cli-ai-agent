@@ -42,6 +42,14 @@ class GitHubManager:
                 self.user = self.github.get_user()
                 self.initialized = True
                 logger.info("GitHub manager initialized successfully")
+                
+                # Try to initialize repository immediately
+                try:
+                    self.repo = self.user.get_repo(self.repo_name)
+                    logger.info(f"Repository connected: {self.repo.full_name}")
+                except Exception as repo_e:
+                    logger.warning(f"Repository connection failed: {repo_e}")
+                    
             except Exception as e:
                 logger.warning(f"GitHub initialization failed: {e}")
                 self.github = None
