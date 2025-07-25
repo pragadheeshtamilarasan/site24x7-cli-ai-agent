@@ -44,6 +44,10 @@ async def lifespan(app: FastAPI):
     # Initialize database
     init_db()
     
+    # Initialize default configurations
+    from database import ConfigurationManager
+    ConfigurationManager.initialize_defaults()
+    
     # Initialize and start scheduler
     scheduler_service = SchedulerService()
     await scheduler_service.start()
