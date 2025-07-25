@@ -29,6 +29,14 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 
 ## Recent Changes
 
+### Enhanced Local LLM Support & Comprehensive Logging (July 25, 2025)
+- **Complete Local LLM Configuration**: Added API key, model name, and base URL fields for local LLM setup
+- **Smart AI Provider Switching**: Dynamic form that switches between OpenAI and Local LLM configurations
+- **Local LLM Examples**: Support for Ollama, LM Studio, and custom OpenAI-compatible endpoints
+- **Comprehensive Logging System**: New `/logs` page with real-time workflow error monitoring
+- **Advanced Log Filtering**: Filter by task type, status, and auto-refresh capabilities
+- **System Health Dashboard**: Live status monitoring for scheduler, AI service, GitHub, and database
+
 ### Complete Modern UI Redesign (July 25, 2025)
 - **Contemporary Design System**: Implemented modern design language with Inter and JetBrains Mono fonts
 - **Advanced CSS Framework**: Created comprehensive CSS system with CSS variables, gradients, and modern shadows
