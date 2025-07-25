@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site24x7 CLI AI Agent - Configuration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-robot me-2"></i>
+                Site24x7 CLI AI Agent
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/config">
+                            <i class="fas fa-cog me-1"></i>Configuration
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logs">
+                            <i class="fas fa-file-alt me-1"></i>Logs
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="display-6 fw-bold text-gray-900 mb-1">Configuration</h1>
+                        <p class="text-muted mb-0">Configure your Site24x7 CLI AI Agent settings - all in one place</p>
+                    </div>
+                    <button class="btn btn-outline-secondary" onclick="window.location.href='/dashboard'">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {% if success_message %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ success_message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        {% if error_message %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ error_message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/config">
+            <div class="row">
+                <!-- GitHub Configuration -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fab fa-github me-2 text-primary"></i>GitHub Configuration
+                            </h5>
+                            <small class="text-muted">Configure GitHub integration for automatic repository management (uses polling for local deployment)</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="github_token" class="form-label">
+                                    <i class="fas fa-key me-1"></i>Personal Access Token
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="password" class="form-control" id="github_token" name="github_token" 
+                                       value="{{ configs.get('github_token', '') }}" 
+                                       placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                                <div class="form-text">
+                                    <a href="https://github.com/settings/tokens" target="_blank">
+                                        <i class="fas fa-external-link-alt me-1"></i>Create GitHub Token
+                                    </a> - Required permissions: repo, workflow, read:user
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="github_repo_name" class="form-label">
+                                    <i class="fas fa-code-branch me-1"></i>Repository Name
+                                </label>
+                                <input type="text" class="form-control" id="github_repo_name" name="github_repo_name" 
+                                       value="{{ configs.get('github_repo_name', 'site24x7-cli') }}" 
+                                       placeholder="site24x7-cli">
+                                <div class="form-text">Name of your Site24x7 CLI repository</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="github_username" class="form-label">
+                                    <i class="fas fa-user me-1"></i>GitHub Username
+                                </label>
+                                <input type="text" class="form-control" id="github_username" name="github_username" 
+                                       value="{{ configs.get('github_username', '') }}" 
+                                       placeholder="Your GitHub username">
+                                <div class="form-text">Optional: Your GitHub username for repository operations</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="github_polling_interval" class="form-label">
+                                    <i class="fas fa-clock me-1"></i>Polling Interval (Minutes)
+                                </label>
+                                <select class="form-select" id="github_polling_interval" name="github_polling_interval">
+                                    <option value="5" {{ 'selected' if configs.get('github_polling_interval') == 5 else '' }}>Every 5 Minutes (Very Responsive)</option>
+                                    <option value="15" {{ 'selected' if configs.get('github_polling_interval', 15) == 15 else '' }}>Every 15 Minutes (Recommended)</option>
+                                    <option value="30" {{ 'selected' if configs.get('github_polling_interval') == 30 else '' }}>Every 30 Minutes</option>
+                                    <option value="60" {{ 'selected' if configs.get('github_polling_interval') == 60 else '' }}>Every Hour</option>
+                                </select>
+                                <div class="form-text">How often to check GitHub for new issues and PRs (local deployment)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Configuration -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-brain me-2 text-success"></i>AI Configuration
+                            </h5>
+                            <small class="text-muted">Configure AI provider for intelligent analysis and responses</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">AI Provider</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ai_provider" id="provider_openai" 
+                                           value="openai" {{ 'checked' if not configs.get('use_local_llm', False) else '' }}
+                                           onchange="toggleAIProvider()">
+                                    <label class="form-check-label" for="provider_openai">
+                                        <i class="fas fa-cloud me-1"></i>OpenAI (Recommended)
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ai_provider" id="provider_local" 
+                                           value="local" {{ 'checked' if configs.get('use_local_llm', False) else '' }}
+                                           onchange="toggleAIProvider()">
+                                    <label class="form-check-label" for="provider_local">
+                                        <i class="fas fa-server me-1"></i>Local LLM (Advanced)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="openai_config" style="display: {{ 'none' if configs.get('use_local_llm', False) else 'block' }}">
+                                <div class="mb-3">
+                                    <label for="openai_api_key" class="form-label">
+                                        <i class="fas fa-key me-1"></i>OpenAI API Key
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="password" class="form-control" id="openai_api_key" name="openai_api_key" 
+                                           value="{{ configs.get('openai_api_key', '') }}" 
+                                           placeholder="sk-xxxxxxxxxxxxxxxxxxxx">
+                                    <div class="form-text">
+                                        <a href="https://platform.openai.com/api-keys" target="_blank">
+                                            <i class="fas fa-external-link-alt me-1"></i>Get OpenAI API Key
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="openai_model" class="form-label">
+                                        <i class="fas fa-cog me-1"></i>Model
+                                    </label>
+                                    <select class="form-select" id="openai_model" name="openai_model">
+                                        <option value="gpt-4o" {{ 'selected' if configs.get('openai_model') == 'gpt-4o' else '' }}>GPT-4o (Latest, Recommended)</option>
+                                        <option value="gpt-4" {{ 'selected' if configs.get('openai_model') == 'gpt-4' else '' }}>GPT-4</option>
+                                        <option value="gpt-3.5-turbo" {{ 'selected' if configs.get('openai_model') == 'gpt-3.5-turbo' else '' }}>GPT-3.5 Turbo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="local_config" style="display: {{ 'block' if configs.get('use_local_llm', False) else 'none' }}">
+                                <div class="mb-3">
+                                    <label for="openai_base_url" class="form-label">
+                                        <i class="fas fa-link me-1"></i>Local LLM Base URL
+                                    </label>
+                                    <input type="url" class="form-control" id="openai_base_url" name="openai_base_url" 
+                                           value="{{ configs.get('openai_base_url', '') }}" 
+                                           placeholder="http://localhost:1234/v1">
+                                    <div class="form-text">URL of your local LLM server with OpenAI-compatible API</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Site24x7 Configuration -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-globe me-2 text-info"></i>Site24x7 Configuration
+                            </h5>
+                            <small class="text-muted">Configure Site24x7 API documentation source</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="site24x7_docs_url" class="form-label">
+                                    <i class="fas fa-book me-1"></i>API Documentation URL
+                                </label>
+                                <input type="url" class="form-control" id="site24x7_docs_url" name="site24x7_docs_url" 
+                                       value="{{ configs.get('site24x7_docs_url', 'https://www.site24x7.com/help/api/') }}" 
+                                       placeholder="https://www.site24x7.com/help/api/">
+                                <div class="form-text">URL to scrape for API documentation updates</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="scraper_interval_hours" class="form-label">
+                                    <i class="fas fa-clock me-1"></i>Scraping Interval (Hours)
+                                </label>
+                                <select class="form-select" id="scraper_interval_hours" name="scraper_interval_hours">
+                                    <option value="1" {{ 'selected' if configs.get('scraper_interval_hours') == 1 else '' }}>Every Hour</option>
+                                    <option value="6" {{ 'selected' if configs.get('scraper_interval_hours') == 6 else '' }}>Every 6 Hours (Recommended)</option>
+                                    <option value="12" {{ 'selected' if configs.get('scraper_interval_hours') == 12 else '' }}>Every 12 Hours</option>
+                                    <option value="24" {{ 'selected' if configs.get('scraper_interval_hours') == 24 else '' }}>Daily</option>
+                                </select>
+                                <div class="form-text">How often to check for API documentation changes</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="maintenance_interval_hours" class="form-label">
+                                    <i class="fas fa-wrench me-1"></i>Maintenance Interval (Hours)
+                                </label>
+                                <select class="form-select" id="maintenance_interval_hours" name="maintenance_interval_hours">
+                                    <option value="6" {{ 'selected' if configs.get('maintenance_interval_hours') == 6 else '' }}>Every 6 Hours</option>
+                                    <option value="12" {{ 'selected' if configs.get('maintenance_interval_hours') == 12 else '' }}>Every 12 Hours</option>
+                                    <option value="24" {{ 'selected' if configs.get('maintenance_interval_hours') == 24 else '' }}>Daily (Recommended)</option>
+                                    <option value="168" {{ 'selected' if configs.get('maintenance_interval_hours') == 168 else '' }}>Weekly</option>
+                                </select>
+                                <div class="form-text">How often to perform GitHub maintenance tasks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Automation Settings -->
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-magic me-2 text-warning"></i>Automation Settings
+                            </h5>
+                            <small class="text-muted">Control automated behaviors and responses</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable_auto_deployment" 
+                                           name="enable_auto_deployment" value="true"
+                                           {{ 'checked' if configs.get('enable_auto_deployment', True) else '' }}>
+                                    <label class="form-check-label" for="enable_auto_deployment">
+                                        <i class="fas fa-rocket me-1"></i>Auto-deploy CLI updates
+                                    </label>
+                                </div>
+                                <div class="form-text">Automatically push CLI updates to GitHub when API changes are detected</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable_issue_auto_response" 
+                                           name="enable_issue_auto_response" value="true"
+                                           {{ 'checked' if configs.get('enable_issue_auto_response', True) else '' }}>
+                                    <label class="form-check-label" for="enable_issue_auto_response">
+                                        <i class="fas fa-comments me-1"></i>Auto-respond to issues
+                                    </label>
+                                </div>
+                                <div class="form-text">Automatically respond to GitHub issues with AI-generated answers</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="enable_pr_auto_merge" 
+                                           name="enable_pr_auto_merge" value="true"
+                                           {{ 'checked' if configs.get('enable_pr_auto_merge', False) else '' }}>
+                                    <label class="form-check-label" for="enable_pr_auto_merge">
+                                        <i class="fas fa-code-branch me-1"></i>Auto-merge simple PRs
+                                    </label>
+                                </div>
+                                <div class="form-text">Automatically merge simple pull requests (use with caution)</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="debug_mode" 
+                                           name="debug_mode" value="true"
+                                           {{ 'checked' if configs.get('debug_mode', False) else '' }}>
+                                    <label class="form-check-label" for="debug_mode">
+                                        <i class="fas fa-bug me-1"></i>Debug Mode
+                                    </label>
+                                </div>
+                                <div class="form-text">Enable verbose logging for troubleshooting</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Settings -->
+                <div class="col-lg-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bell me-2 text-danger"></i>Notification Settings
+                            </h5>
+                            <small class="text-muted">Configure notifications for manual intervention alerts</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="notification_email" class="form-label">
+                                            <i class="fas fa-envelope me-1"></i>Email Address
+                                        </label>
+                                        <input type="email" class="form-control" id="notification_email" name="notification_email" 
+                                               value="{{ configs.get('notification_email', '') }}" 
+                                               placeholder="your-email@example.com">
+                                        <div class="form-text">Email address for important notifications</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="slack_webhook_url" class="form-label">
+                                            <i class="fab fa-slack me-1"></i>Slack Webhook URL
+                                        </label>
+                                        <input type="url" class="form-control" id="slack_webhook_url" name="slack_webhook_url" 
+                                               value="{{ configs.get('slack_webhook_url', '') }}" 
+                                               placeholder="https://hooks.slack.com/services/...">
+                                        <div class="form-text">
+                                            <a href="https://api.slack.com/messaging/webhooks" target="_blank">
+                                                <i class="fas fa-external-link-alt me-1"></i>Create Slack Webhook
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="button" class="btn btn-outline-danger" onclick="testConfiguration()">
+                                <i class="fas fa-vial me-1"></i>Test Configuration
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-secondary me-2" onclick="resetToDefaults()">
+                                <i class="fas fa-undo me-1"></i>Reset to Defaults
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Save Configuration
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Test Configuration Modal -->
+    <div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="testModalLabel">
+                        <i class="fas fa-vial me-2"></i>Configuration Test Results
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="testResults">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Testing...</span>
+                        </div>
+                        <p class="mt-2">Testing configuration...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/modern-enhancements.js"></script>
+    <script>
+        function toggleAIProvider() {
+            const openaiSelected = document.getElementById('provider_openai').checked;
+            document.getElementById('openai_config').style.display = openaiSelected ? 'block' : 'none';
+            document.getElementById('local_config').style.display = openaiSelected ? 'none' : 'block';
+        }
+
+        function testConfiguration() {
+            const modal = new bootstrap.Modal(document.getElementById('testModal'));
+            modal.show();
+
+            // Collect form data
+            const formData = new FormData(document.querySelector('form'));
+            
+            fetch('/api/v1/test-config', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('testResults').innerHTML = generateTestResults(data);
+            })
+            .catch(error => {
+                document.getElementById('testResults').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Test failed: ${error.message}
+                    </div>
+                `;
+            });
+        }
+
+        function generateTestResults(results) {
+            let html = '<div class="list-group">';
+            
+            for (const [test, result] of Object.entries(results)) {
+                const icon = result.success ? 'fas fa-check-circle text-success' : 'fas fa-times-circle text-danger';
+                const status = result.success ? 'Success' : 'Failed';
+                
+                html += `
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1"><i class="${icon} me-2"></i>${test}</h6>
+                                <p class="mb-1">${result.message}</p>
+                            </div>
+                            <span class="badge ${result.success ? 'bg-success' : 'bg-danger'}">${status}</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset all settings to defaults? This will clear all your current configuration.')) {
+                fetch('/api/v1/reset-config', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Failed to reset configuration: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error resetting configuration: ' + error.message);
+                });
+            }
+        }
+
+        // Initialize AI provider toggle on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleAIProvider();
+        });
+    </script>
+</body>
+</html>
