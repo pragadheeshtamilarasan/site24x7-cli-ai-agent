@@ -13,6 +13,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.cron import CronTrigger
 
 from config import settings
+from database import TaskLogger
 from services.api_scraper import Site24x7APIScraper
 from services.cli_generator import CLIGenerator
 from services.github_manager import GitHubManager
@@ -26,7 +27,11 @@ class SchedulerService:
         self.scheduler = AsyncIOScheduler()
         self.scraper = Site24x7APIScraper()
         self.cli_generator = CLIGenerator()
-        self.github_manager = GitHubManager()
+        try:
+            self.github_manager = GitHubManager()
+        except Exception as e:
+            logger.warning(f"GitHub manager initialization failed: {e}")
+            self.github_manager = None
         
         # Track last successful runs
         self.last_scrape = None
@@ -99,8 +104,9 @@ class SchedulerService:
         try:
             logger.info("Running initial startup tasks...")
             
-            # Initialize GitHub repository
-            await self.github_manager.initialize_repository()
+            # Initialize GitHub repository if available
+            if self.github_manager and self.github_manager.initialized:
+                await self.github_manager.initialize_repository()
             
             # Run initial scrape and CLI generation
             await self._scrape_and_update_cli()
@@ -134,9 +140,13 @@ class SchedulerService:
                 logger.info("Generating updated CLI from documentation...")
                 cli_project = await self.cli_generator.generate_cli_from_documentation(documentation)
                 
-                # Deploy to GitHub
-                logger.info("Deploying CLI updates to GitHub...")
-                deployment_result = await self.github_manager.deploy_cli_project(cli_project)
+                # Deploy to GitHub if available
+                if self.github_manager and self.github_manager.initialized:
+                    logger.info("Deploying CLI updates to GitHub...")
+                    deployment_result = await self.github_manager.deploy_cli_project(cli_project)
+                else:
+                    logger.info("Skipping GitHub deployment - GitHub not configured")
+                    deployment_result = {"status": "skipped", "reason": "GitHub not configured"}
                 
                 self.last_scrape = datetime.utcnow()
                 self.last_generation = datetime.utcnow()
@@ -174,9 +184,13 @@ class SchedulerService:
             from database import TaskLogger
             TaskLogger.log("scheduler", "started", "Starting GitHub maintenance")
             
-            # Handle issues and pull requests
-            logger.info("Handling GitHub issues and pull requests...")
-            maintenance_result = await self.github_manager.handle_issues_and_prs()
+            # Handle issues and pull requests if GitHub is available
+            if self.github_manager and self.github_manager.initialized:
+                logger.info("Handling GitHub issues and pull requests...")
+                maintenance_result = await self.github_manager.handle_issues_and_prs()
+            else:
+                logger.info("Skipping GitHub maintenance - GitHub not configured")
+                maintenance_result = {"status": "skipped", "reason": "GitHub not configured"}
             
             self.last_maintenance = datetime.utcnow()
             
@@ -212,13 +226,16 @@ class SchedulerService:
                 "last_maintenance": self.last_maintenance.isoformat() if self.last_maintenance else None
             }
             
-            # Check GitHub repository status
-            try:
-                repo_stats = await self.github_manager.get_repository_stats()
-                health_status["github_status"] = "healthy"
-                health_status["repo_stats"] = repo_stats
-            except Exception as e:
-                health_status["github_status"] = f"error: {e}"
+            # Check GitHub repository status if available
+            if self.github_manager and self.github_manager.initialized:
+                try:
+                    repo_stats = await self.github_manager.get_repository_stats()
+                    health_status["github_status"] = "healthy"
+                    health_status["repo_stats"] = repo_stats
+                except Exception as e:
+                    health_status["github_status"] = f"error: {e}"
+            else:
+                health_status["github_status"] = "not configured"
             
             # Check database connectivity
             try:
@@ -260,8 +277,11 @@ class SchedulerService:
             from services.ai_analyzer import AIAnalyzer
             ai_analyzer = AIAnalyzer()
             
-            # Get repository statistics
-            repo_stats = await self.github_manager.get_repository_stats()
+            # Get repository statistics if GitHub is available
+            if self.github_manager and self.github_manager.initialized:
+                repo_stats = await self.github_manager.get_repository_stats()
+            else:
+                repo_stats = {"status": "not_configured", "reason": "GitHub not available"}
             
             # Get recent logs for analysis
             from database import TaskLogger, GitHubOperationLogger
