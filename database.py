@@ -132,6 +132,59 @@ class ConfigurationManager:
                 except json.JSONDecodeError:
                     configs[row['key']] = row['value']
             return configs
+    
+    @staticmethod
+    def get_with_env_fallback(key: str, env_var: str = None, default: Any = None) -> Any:
+        """Get config from database first, then fallback to environment variable"""
+        import os
+        
+        # First try database
+        db_value = ConfigurationManager.get(key)
+        if db_value is not None and db_value != "":
+            return db_value
+        
+        # Fallback to environment variable
+        if env_var:
+            env_value = os.getenv(env_var)
+            if env_value:
+                # Store in database for next time
+                ConfigurationManager.set(key, env_value)
+                return env_value
+        
+        return default
+    
+    @staticmethod
+    def initialize_defaults():
+        """Initialize default configurations if they don't exist"""
+        import os
+        
+        default_configs = {
+            'github_token': os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN', ''),
+            'github_repo_name': 'site24x7-cli',
+            'github_username': '',
+            'openai_api_key': os.getenv('OPENAI_API_KEY', ''),
+            'openai_model': 'gpt-4o',
+            'openai_base_url': os.getenv('OPENAI_BASE_URL', ''),
+            'use_local_llm': False,
+            'site24x7_docs_url': 'https://www.site24x7.com/help/api/',
+            'scraper_interval_hours': 6,
+            'maintenance_interval_hours': 24,
+            'github_polling_interval': 15,
+            'notification_email': '',
+            'slack_webhook_url': '',
+            'enable_auto_deployment': True,
+            'enable_pr_auto_merge': False,
+            'enable_issue_auto_response': True,
+            'debug_mode': False
+        }
+        
+        existing_configs = ConfigurationManager.get_all()
+        
+        for key, default_value in default_configs.items():
+            if key not in existing_configs:
+                # Only set if we have a non-empty default or environment value
+                if default_value != "" and default_value is not None:
+                    ConfigurationManager.set(key, default_value)
 
 class APISnapshotManager:
     """Manage API documentation snapshots"""
