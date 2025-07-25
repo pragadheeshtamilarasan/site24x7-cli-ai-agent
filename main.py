@@ -96,7 +96,9 @@ async def health_check():
     return {
         "status": "healthy",
         "service": "Site24x7 CLI AI Agent",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "port": 8080,
+        "timestamp": "2025-07-25"
     }
 
 if __name__ == "__main__":
