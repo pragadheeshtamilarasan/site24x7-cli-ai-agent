@@ -116,7 +116,7 @@ case $choice in
             
             if ! docker run -d \
                 --name site24x7-cli-ai-agent \
-                -p 5545:5545 \
+                -p 8080:8080 \
                 --restart unless-stopped \
                 site24x7-cli-ai-agent; then
                 echo "❌ Failed to start container"
@@ -125,7 +125,7 @@ case $choice in
             
             echo ""
             echo "✅ Docker deployment complete!"
-            echo "🌐 Application running at: http://localhost:5545"
+            echo "🌐 Application running at: http://localhost:8080"
             echo ""
             echo "Useful commands:"
             echo "  View logs: docker logs site24x7-cli-ai-agent"
@@ -170,7 +170,7 @@ case $choice in
         echo "🚀 Starting Site24x7 CLI AI Agent..."
         echo ""
         echo "✅ Application starting..."
-        echo "🌐 Application will be available at: http://localhost:5545"
+        echo "🌐 Application will be available at: http://localhost:8080"
         echo ""
         echo "Press Ctrl+C to stop the application"
         echo ""
