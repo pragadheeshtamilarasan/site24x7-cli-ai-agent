@@ -199,11 +199,35 @@
                                 <div class="mb-3">
                                     <label for="openai_base_url" class="form-label">
                                         <i class="fas fa-link me-1"></i>Local LLM Base URL
+                                        <span class="text-danger">*</span>
                                     </label>
                                     <input type="url" class="form-control" id="openai_base_url" name="openai_base_url" 
                                            value="{{ configs.get('openai_base_url', '') }}" 
                                            placeholder="http://localhost:1234/v1">
-                                    <div class="form-text">URL of your local LLM server with OpenAI-compatible API</div>
+                                    <div class="form-text">URL of your local LLM server with OpenAI-compatible API (e.g., Ollama, LM Studio)</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="local_api_key" class="form-label">
+                                        <i class="fas fa-key me-1"></i>API Key
+                                    </label>
+                                    <input type="password" class="form-control" id="local_api_key" name="local_api_key" 
+                                           value="{{ configs.get('local_api_key', '') }}" 
+                                           placeholder="your-local-llm-api-key">
+                                    <div class="form-text">API key for your local LLM (leave empty if not required)</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="local_model" class="form-label">
+                                        <i class="fas fa-cog me-1"></i>Model Name
+                                    </label>
+                                    <input type="text" class="form-control" id="local_model" name="local_model" 
+                                           value="{{ configs.get('local_model', 'llama2') }}" 
+                                           placeholder="llama2">
+                                    <div class="form-text">
+                                        Model name (e.g., llama2, codellama, mistral, or custom model name)
+                                        <br><small class="text-muted">Examples: llama2:7b, codellama:13b, mistral:latest</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
