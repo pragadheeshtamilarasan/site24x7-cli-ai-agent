@@ -35,6 +35,7 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 - **Simple Deployment Script**: Created mac-deploy.sh for easy local setup with Python or Docker
 - **Streamlined Setup**: One script handles both virtual environment and Docker deployment options
 - **Simplified Documentation**: Updated README to focus on Mac-specific installation and setup
+- **Complete Uninstall Support**: Added comprehensive uninstallation with cleanup of all components
 
 ### Local LLM Support Added (July 24, 2025)
 - **AI Configuration**: Added support for local LLM with OpenAI API compatibility
