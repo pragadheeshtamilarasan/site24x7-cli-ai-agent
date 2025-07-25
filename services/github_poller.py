@@ -251,8 +251,55 @@ class GitHubPoller:
                 details=issue_data
             )
             
-            # TODO: Integrate with AI analyzer to generate appropriate response
             logger.info(f"New issue detected: #{issue_data['number']} - {issue_data['title']}")
+            
+            # Generate AI response to the issue
+            try:
+                from services.ai_analyzer import AIAnalyzer
+                ai_analyzer = AIAnalyzer()
+                
+                # Analyze the issue
+                analysis = await ai_analyzer.analyze_github_issue(
+                    issue_data.get('title', ''),
+                    issue_data.get('body', '') or 'No description provided'
+                )
+                
+                # Generate response
+                response_data = await ai_analyzer.generate_issue_response(analysis)
+                
+                # Post the comment to GitHub
+                if response_data.get('comment'):
+                    await self._post_issue_comment(issue_data['number'], response_data['comment'])
+                    
+                    GitHubOperationLogger.log(
+                        "issue_response",
+                        "posted",
+                        message=f"AI response posted to issue #{issue_data['number']}",
+                        details={'analysis': analysis, 'response': response_data}
+                    )
+                    
+                    logger.info(f"AI response posted to issue #{issue_data['number']}")
+                
+            except Exception as ai_error:
+                logger.error(f"AI response generation failed for issue #{issue_data['number']}: {ai_error}")
+                
+                # Post a simple fallback response
+                fallback_comment = """Thank you for opening this issue! 🤖
+
+I'm the Site24x7 CLI AI agent, and I've detected your issue. While I'm currently having trouble generating a detailed response, I want to acknowledge that I've received your issue and it will be reviewed.
+
+For immediate assistance with installation issues, please check:
+1. The README.md file for installation instructions
+2. The requirements.txt file for dependencies
+3. Any error messages during installation
+
+A human maintainer will review this issue soon."""
+                
+                try:
+                    await self._post_issue_comment(issue_data['number'], fallback_comment)
+                    logger.info(f"Fallback response posted to issue #{issue_data['number']}")
+                except Exception as fallback_error:
+                    logger.error(f"Failed to post fallback response: {fallback_error}")
             
         except Exception as e:
             logger.error(f"Error handling new issue: {e}")
@@ -300,6 +347,17 @@ class GitHubPoller:
     def _update_last_check(self, activity_type: str):
         """Update the last check time for an activity type"""
         self.last_check[activity_type] = datetime.utcnow()
+    
+    async def _post_issue_comment(self, issue_number: int, comment_text: str):
+        """Post a comment to a GitHub issue"""
+        try:
+            issue = self.repo.get_issue(issue_number)
+            comment = issue.create_comment(comment_text)
+            logger.info(f"Comment posted to issue #{issue_number}: {comment.id}")
+            return comment
+        except Exception as e:
+            logger.error(f"Failed to post comment to issue #{issue_number}: {e}")
+            raise
     
     async def get_repository_stats(self) -> Dict[str, Any]:
         """Get current repository statistics"""
