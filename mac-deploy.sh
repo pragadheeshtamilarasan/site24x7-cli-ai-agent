@@ -104,14 +104,24 @@ case $choice in
             
             # Build and run with Docker
             echo "Building Docker image..."
-            docker build -t site24x7-cli-ai-agent .
+            if ! docker build -t site24x7-cli-ai-agent .; then
+                echo "❌ Docker build failed"
+                exit 1
+            fi
             
             echo "Starting container..."
-            docker run -d \
+            # Stop and remove existing container if it exists
+            docker stop site24x7-cli-ai-agent 2>/dev/null || true
+            docker rm site24x7-cli-ai-agent 2>/dev/null || true
+            
+            if ! docker run -d \
                 --name site24x7-cli-ai-agent \
                 -p 5000:5000 \
                 --restart unless-stopped \
-                site24x7-cli-ai-agent
+                site24x7-cli-ai-agent; then
+                echo "❌ Failed to start container"
+                exit 1
+            fi
             
             echo ""
             echo "✅ Docker deployment complete!"
