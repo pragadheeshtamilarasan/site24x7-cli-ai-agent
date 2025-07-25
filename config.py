@@ -71,6 +71,14 @@ class Settings(BaseSettings):
     def use_local_llm(self) -> bool:
         return self.get_config('use_local_llm', False)
     
+    @property
+    def local_api_key(self) -> str:
+        return self.get_config('local_api_key', "")
+    
+    @property
+    def local_model(self) -> str:
+        return self.get_config('local_model', "llama2")
+    
     # Scheduler Configuration
     @property
     def scraper_interval_hours(self) -> int:
