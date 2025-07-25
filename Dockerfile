@@ -4,17 +4,12 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Configure DNS and package sources for better connectivity
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
-    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-
 # Install system dependencies with retries and fallbacks
-RUN apt-get update --fix-missing || true && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     git \
     curl \
     ca-certificates \
-    || (apt-get update && apt-get install -y --no-install-recommends git curl ca-certificates) \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy requirements and install Python dependencies
