@@ -7,7 +7,7 @@ import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel
 
 from database import (
@@ -185,6 +185,153 @@ async def trigger_api_scrape():
     except Exception as e:
         logger.error(f"API scrape trigger error: {e}")
         raise HTTPException(status_code=500, detail=f"API scraping failed: {str(e)}")
+
+@router.post("/test-config")
+async def test_config(request: Request):
+    """Test configuration settings"""
+    try:
+        form_data = await request.form()
+        test_results = {}
+        
+        # Test GitHub token
+        github_token = form_data.get('github_token', '').strip()
+        if github_token:
+            try:
+                import requests
+                headers = {'Authorization': f'token {github_token}'}
+                response = requests.get('https://api.github.com/user', headers=headers, timeout=10)
+                if response.status_code == 200:
+                    test_results['GitHub Authentication'] = {
+                        'success': True,
+                        'message': f"Connected as {response.json().get('login', 'Unknown')}"
+                    }
+                else:
+                    test_results['GitHub Authentication'] = {
+                        'success': False,
+                        'message': f"GitHub API error: {response.status_code}"
+                    }
+            except Exception as e:
+                test_results['GitHub Authentication'] = {
+                    'success': False,
+                    'message': f"Connection failed: {str(e)}"
+                }
+        else:
+            test_results['GitHub Authentication'] = {
+                'success': False,
+                'message': "No GitHub token provided"
+            }
+        
+        # Test OpenAI API
+        openai_key = form_data.get('openai_api_key', '').strip()
+        use_local_llm = form_data.get('ai_provider') == 'local'
+        
+        if use_local_llm:
+            base_url = form_data.get('openai_base_url', '').strip()
+            if base_url:
+                try:
+                    import requests
+                    response = requests.get(f"{base_url.rstrip('/')}/models", timeout=10)
+                    if response.status_code == 200:
+                        test_results['Local LLM Connection'] = {
+                            'success': True,
+                            'message': f"Connected to local LLM at {base_url}"
+                        }
+                    else:
+                        test_results['Local LLM Connection'] = {
+                            'success': False,
+                            'message': f"Local LLM error: {response.status_code}"
+                        }
+                except Exception as e:
+                    test_results['Local LLM Connection'] = {
+                        'success': False,
+                        'message': f"Connection failed: {str(e)}"
+                    }
+            else:
+                test_results['Local LLM Connection'] = {
+                    'success': False,
+                    'message': "No local LLM URL provided"
+                }
+        elif openai_key:
+            try:
+                import openai
+                client = openai.OpenAI(api_key=openai_key)
+                models = client.models.list()
+                test_results['OpenAI API'] = {
+                    'success': True,
+                    'message': f"Connected - {len(models.data)} models available"
+                }
+            except Exception as e:
+                test_results['OpenAI API'] = {
+                    'success': False,
+                    'message': f"API error: {str(e)}"
+                }
+        else:
+            test_results['AI Configuration'] = {
+                'success': False,
+                'message': "No AI provider configured"
+            }
+        
+        # Test Site24x7 documentation URL
+        docs_url = form_data.get('site24x7_docs_url', '').strip()
+        if docs_url:
+            try:
+                import requests
+                response = requests.get(docs_url, timeout=10)
+                if response.status_code == 200:
+                    test_results['Site24x7 Documentation'] = {
+                        'success': True,
+                        'message': f"Documentation accessible - {len(response.text)} characters"
+                    }
+                else:
+                    test_results['Site24x7 Documentation'] = {
+                        'success': False,
+                        'message': f"HTTP error: {response.status_code}"
+                    }
+            except Exception as e:
+                test_results['Site24x7 Documentation'] = {
+                    'success': False,
+                    'message': f"Connection failed: {str(e)}"
+                }
+        
+        return test_results
+        
+    except Exception as e:
+        logger.error(f"Config test error: {e}")
+        return {'error': {'success': False, 'message': f"Test failed: {str(e)}"}}
+
+@router.post("/reset-config")
+async def reset_config():
+    """Reset configuration to defaults"""
+    try:
+        import sqlite3
+        
+        # Clear all existing configurations
+        with sqlite3.connect("site24x7_agent.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM configurations")
+            conn.commit()
+        
+        # Reinitialize defaults
+        ConfigurationManager.initialize_defaults()
+        
+        # Log the action
+        TaskLogger.log(
+            "configuration_reset",
+            "completed",
+            "Configuration reset to defaults via API"
+        )
+        
+        return {
+            "success": True,
+            "message": "Configuration reset to defaults"
+        }
+        
+    except Exception as e:
+        logger.error(f"Config reset error: {e}")
+        return {
+            "success": False,
+            "message": f"Reset failed: {str(e)}"
+        }
 
 @router.post("/actions/generate-cli")
 async def trigger_cli_generation():
