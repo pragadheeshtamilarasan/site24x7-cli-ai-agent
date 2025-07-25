@@ -1,0 +1,34 @@
+🐳 Using Docker deployment...
+Building Docker image...
+[+] Building 8.2s (7/12)                                                                                                                                                                         docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                                                                                             0.0s
+ => => transferring dockerfile: 1.35kB                                                                                                                                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                                                                                                                              4.4s
+ => [internal] load .dockerignore                                                                                                                                                                                0.0s
+ => => transferring context: 549B                                                                                                                                                                                0.0s
+ => [1/8] FROM docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                                        3.3s
+ => => resolve docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                                        0.0s
+ => => sha256:23635a31452efc16982ee0c8dd50d46aa2445221f14cb157dfed8a387cce2ee6 16.14MB / 16.14MB                                                                                                                 1.4s
+ => => sha256:65bfefa96d6c8b1d434afa24988e3c8cf866f389a0920e43deb11aa26ff139d5 250B / 250B                                                                                                                       1.0s
+ => => sha256:27b1542b92578c5ae2fdd86937dbb3ff246ba74c2666b93d03369b030c2f6128 3.34MB / 3.34MB                                                                                                                   1.7s
+ => => sha256:b3407f3b5b5beb45007b2980ccef71785b08dae5a2dcbdd91272f35c4c5e784f 28.08MB / 28.08MB                                                                                                                 2.5s
+ => => extracting sha256:b3407f3b5b5beb45007b2980ccef71785b08dae5a2dcbdd91272f35c4c5e784f                                                                                                                        0.5s
+ => => extracting sha256:27b1542b92578c5ae2fdd86937dbb3ff246ba74c2666b93d03369b030c2f6128                                                                                                                        0.1s
+ => => extracting sha256:23635a31452efc16982ee0c8dd50d46aa2445221f14cb157dfed8a387cce2ee6                                                                                                                        0.2s
+ => => extracting sha256:65bfefa96d6c8b1d434afa24988e3c8cf866f389a0920e43deb11aa26ff139d5                                                                                                                        0.0s
+ => [internal] load build context                                                                                                                                                                                0.0s
+ => => transferring context: 703.25kB                                                                                                                                                                            0.0s
+ => [2/8] WORKDIR /app                                                                                                                                                                                           0.2s
+ => ERROR [3/8] RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf &&     echo "nameserver 8.8.4.4" >> /etc/resolv.conf                                                                                            0.1s
+------                                                                                                                                                                                                                
+ > [3/8] RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf &&     echo "nameserver 8.8.4.4" >> /etc/resolv.conf:
+0.114 /bin/sh: 1: cannot create /etc/resolv.conf: Read-only file system
+------
+Dockerfile:8
+--------------------
+   7 |     # Configure DNS and package sources for better connectivity
+   8 | >>> RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+   9 | >>>     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+  10 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c echo \"nameserver 8.8.8.8\" > /etc/resolv.conf &&     echo \"nameserver 8.8.4.4\" >> /etc/resolv.conf" did not complete successfully: exit code: 2
