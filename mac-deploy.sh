@@ -8,6 +8,65 @@ set -e
 echo "🚀 Site24x7 CLI AI Agent - Mac Deployment"
 echo "========================================="
 
+# Check for uninstall option
+if [ "$1" = "uninstall" ] || [ "$1" = "--uninstall" ] || [ "$1" = "-u" ]; then
+    echo "🗑️  Uninstalling Site24x7 CLI AI Agent..."
+    echo ""
+    
+    # Stop and remove Docker container if exists
+    if command -v docker &> /dev/null; then
+        if docker ps -a --format "table {{.Names}}" | grep -q "site24x7-cli-ai-agent"; then
+            echo "Stopping and removing Docker container..."
+            docker stop site24x7-cli-ai-agent 2>/dev/null || true
+            docker rm site24x7-cli-ai-agent 2>/dev/null || true
+            echo "✅ Docker container removed"
+        fi
+        
+        if docker images --format "table {{.Repository}}" | grep -q "site24x7-cli-ai-agent"; then
+            echo "Removing Docker image..."
+            docker rmi site24x7-cli-ai-agent 2>/dev/null || true
+            echo "✅ Docker image removed"
+        fi
+    fi
+    
+    # Remove virtual environment
+    if [ -d "venv" ]; then
+        echo "Removing Python virtual environment..."
+        rm -rf venv
+        echo "✅ Virtual environment removed"
+    fi
+    
+    # Remove database and logs
+    if [ -f "site24x7_agent.db" ]; then
+        echo "Removing database..."
+        rm -f site24x7_agent.db
+        echo "✅ Database removed"
+    fi
+    
+    if [ -f "site24x7_agent.log" ]; then
+        echo "Removing log files..."
+        rm -f site24x7_agent.log
+        echo "✅ Log files removed"
+    fi
+    
+    # Remove __pycache__ directories
+    if [ -d "__pycache__" ]; then
+        echo "Cleaning up cache files..."
+        find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+        find . -name "*.pyc" -delete 2>/dev/null || true
+        echo "✅ Cache files cleaned"
+    fi
+    
+    echo ""
+    echo "🎉 Site24x7 CLI AI Agent uninstalled successfully!"
+    echo ""
+    echo "To completely remove the project:"
+    echo "  cd .."
+    echo "  rm -rf site24x7-cli-ai-agent"
+    echo ""
+    exit 0
+fi
+
 # Check if Python is installed
 if ! command -v python3 &> /dev/null; then
     echo "❌ Python 3 is required but not installed"
@@ -28,13 +87,13 @@ echo ""
 echo "Choose deployment method:"
 echo "1) Docker (recommended if Docker is installed)"
 echo "2) Python virtual environment"
+echo "3) Uninstall Site24x7 CLI AI Agent"
 echo ""
 
 if [ "$DOCKER_AVAILABLE" = true ]; then
-    read -p "Enter choice (1 or 2): " choice
+    read -p "Enter choice (1, 2, or 3): " choice
 else
-    choice=2
-    echo "Using Python virtual environment (Docker not available)"
+    read -p "Enter choice (2 for Python venv, 3 for uninstall): " choice
 fi
 
 case $choice in
@@ -85,21 +144,7 @@ case $choice in
         # Install dependencies
         echo "Installing dependencies..."
         pip install --upgrade pip
-        pip install -r <(grep -v "^-e" requirements.txt 2>/dev/null || echo "
-fastapi
-uvicorn[standard]
-pydantic
-pydantic-settings
-jinja2
-python-multipart
-requests
-beautifulsoup4
-trafilatura
-openai
-pygithub
-gitpython
-apscheduler
-")
+        pip install fastapi uvicorn[standard] pydantic pydantic-settings jinja2 python-multipart requests beautifulsoup4 trafilatura openai pygithub gitpython apscheduler
         
         # Start the application
         echo ""
@@ -112,6 +157,10 @@ apscheduler
         echo ""
         
         python main.py
+        ;;
+    3)
+        # Call uninstall function
+        exec "$0" uninstall
         ;;
     *)
         echo "❌ Invalid choice"
