@@ -161,6 +161,39 @@ MAINTENANCE_INTERVAL_HOURS=24
 - **Detailed Views**: Full operation details and error information
 - **Export Options**: Download logs for analysis
 
+## 🗑️ Uninstallation
+
+### Quick Uninstall
+```bash
+# Using the deployment script
+./mac-deploy.sh uninstall
+
+# Or manually
+./mac-deploy.sh --uninstall
+```
+
+### Manual Uninstall
+```bash
+# Stop Docker container (if using Docker)
+docker stop site24x7-cli-ai-agent
+docker rm site24x7-cli-ai-agent
+docker rmi site24x7-cli-ai-agent
+
+# Remove virtual environment (if using Python)
+rm -rf venv
+
+# Remove data files
+rm -f site24x7_agent.db site24x7_agent.log
+
+# Clean cache files
+find . -name "__pycache__" -type d -exec rm -rf {} +
+find . -name "*.pyc" -delete
+
+# Remove entire project directory
+cd ..
+rm -rf site24x7-cli-ai-agent
+```
+
 ## 🚨 Troubleshooting
 
 ### Common Issues
@@ -168,6 +201,7 @@ MAINTENANCE_INTERVAL_HOURS=24
 2. **Port Conflicts**: Application uses port 5000 by default
 3. **API Limits**: OpenAI and GitHub APIs have rate limits
 4. **Permission Issues**: Ensure GitHub token has required scopes
+5. **Docker Issues**: If Docker daemon isn't running, use Python virtual environment option
 
 ### Logs and Debugging
 - **Application Logs**: Check `site24x7_agent.log` for detailed error information
