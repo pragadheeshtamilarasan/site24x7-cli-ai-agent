@@ -29,17 +29,31 @@ class GitHubManager:
     
     def __init__(self):
         self.github_token = settings.github_token
-        if not self.github_token:
-            raise ValueError("GitHub token not provided")
-        
-        self.github = Github(self.github_token)
-        self.user = self.github.get_user()
+        self.github = None
+        self.user = None
         self.repo_name = settings.github_repo_name
         self.repo = None
         self.ai_analyzer = AIAnalyzer()
+        self.initialized = False
+        
+        if self.github_token:
+            try:
+                self.github = Github(self.github_token)
+                self.user = self.github.get_user()
+                self.initialized = True
+                logger.info("GitHub manager initialized successfully")
+            except Exception as e:
+                logger.warning(f"GitHub initialization failed: {e}")
+                self.github = None
+                self.user = None
+        else:
+            logger.warning("GitHub token not provided - GitHub features will be disabled")
         
     async def initialize_repository(self) -> Dict[str, Any]:
         """Initialize or get existing repository"""
+        if not self.initialized:
+            return {"error": "GitHub not initialized - token not provided"}
+            
         try:
             TaskLogger.log("github_manager", "started", "Initializing GitHub repository")
             
