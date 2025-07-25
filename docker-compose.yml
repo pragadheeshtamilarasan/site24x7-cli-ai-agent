@@ -1,32 +1,45 @@
 version: '3.8'
 
 services:
-  site24x7-agent:
+  site24x7-cli-ai-agent:
     build: .
-    container_name: site24x7-cli-agent
     ports:
-      - "5000:5000"
+      - "8080:8080"
     environment:
-      # Required GitHub Configuration
-      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}
-      - GITHUB_USERNAME=${GITHUB_USERNAME}
+      - PORT=8080
+      # Note: All configuration is now managed through the web UI at http://localhost:8080/config
+      # Environment variables are optional fallbacks only
       
-      # Optional AI Configuration (choose one)
+      # GitHub Configuration (Optional - configure via web UI)
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN:-}
+      - GITHUB_REPO_NAME=${GITHUB_REPO_NAME:-site24x7-cli}
+      - GITHUB_USERNAME=${GITHUB_USERNAME:-}
+      
+      # OpenAI Configuration (Optional - configure via web UI)
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      
+      # Local LLM Configuration (Optional - configure via web UI)
+      - LOCAL_API_KEY=${LOCAL_API_KEY:-}
+      - LOCAL_MODEL=${LOCAL_MODEL:-llama2}
       - USE_LOCAL_LLM=${USE_LOCAL_LLM:-false}
       
-      # Application Settings
-      - SECRET_KEY=${SECRET_KEY:-auto-generated}
-      - SCRAPER_INTERVAL_HOURS=${SCRAPER_INTERVAL_HOURS:-6}
-      - MAINTENANCE_INTERVAL_HOURS=${MAINTENANCE_INTERVAL_HOURS:-24}
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - DEBUG=${DEBUG:-false}
+      # Site24x7 Configuration (Optional - configure via web UI)
+      - SITE24X7_DOCS_URL=${SITE24X7_DOCS_URL:-https://www.site24x7.com/help/api/}
+      
+      # Application Configuration
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      
     volumes:
-      - ./data:/app/data
+      - ./site24x7_agent.db:/app/site24x7_agent.db
+      - ./site24x7_agent.log:/app/site24x7_agent.log
     restart: unless-stopped
+    command: ["python", "main.py"]
+    
+    # Health check to ensure the service is running
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/v1/status"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/status"]
       interval: 30s
       timeout: 10s
       retries: 3
