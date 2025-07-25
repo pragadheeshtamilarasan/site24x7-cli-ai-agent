@@ -166,6 +166,8 @@ class ConfigurationManager:
             'openai_model': 'gpt-4o',
             'openai_base_url': os.getenv('OPENAI_BASE_URL', ''),
             'use_local_llm': False,
+            'local_api_key': os.getenv('LOCAL_API_KEY', ''),
+            'local_model': os.getenv('LOCAL_MODEL', 'llama2'),
             'site24x7_docs_url': 'https://www.site24x7.com/help/api/',
             'scraper_interval_hours': 6,
             'maintenance_interval_hours': 24,
