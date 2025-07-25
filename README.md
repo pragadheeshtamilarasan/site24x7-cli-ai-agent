@@ -1,432 +1,194 @@
 # Site24x7 CLI AI Agent
 
-An autonomous AI-powered system that scrapes Site24x7 API documentation, generates comprehensive CLI tools, and maintains GitHub repositories automatically.
+An autonomous AI-powered system that automatically scrapes Site24x7 API documentation, generates comprehensive CLI tools using AI analysis, and manages GitHub repositories with intelligent automation.
 
-## 🚀 Quick Start
-
-### 🐳 Docker Deployment (Recommended)
-
-**One-line deployment for Ubuntu:**
-```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
-```
-
-**For any local machine (handles corporate networks automatically):**
-```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/fixed-local-deploy.sh | bash
-```
-
-Both commands automatically:
-- Install Docker and Docker Compose (if needed)
-- Download and build the application using network-resilient strategies
-- Start the service on port 5000
-- No terminal configuration needed - configure via web UI!
-
-**Access Points:**
-- Dashboard: http://localhost:5000
-- Configuration: http://localhost:5000/config
-- Logs: http://localhost:5000/logs
-
-For detailed Docker deployment instructions, see [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)
-
----
-
-### 🐍 Manual Python Installation
+## 🚀 Quick Start (Mac)
 
 ### Prerequisites
-- Python 3.11+
-- Git
-- GitHub Personal Access Token
-- OpenAI API Key (optional, for AI features)
+- Python 3.8+ (required)
+- Docker (optional, for containerized deployment)
+- Git (for cloning)
 
-### Installation
-
-1. **Clone the repository**
+### Easy Mac Deployment
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/pragadheeshtamilarasan/site24x7-cli-ai-agent.git
 cd site24x7-cli-ai-agent
+chmod +x mac-deploy.sh
+./mac-deploy.sh
 ```
 
-2. **Set up virtual environment**
+The script will automatically:
+- Detect available Python and Docker
+- Set up the environment (virtual env or Docker)
+- Install all dependencies
+- Start the application on port 5000
+
+### Manual Python Setup
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+git clone https://github.com/pragadheeshtamilarasan/site24x7-cli-ai-agent.git
+cd site24x7-cli-ai-agent
 
-3. **Install dependencies**
-```bash
-pip install fastapi uvicorn pydantic pydantic-settings python-multipart
-pip install jinja2 openai requests beautifulsoup4 trafilatura
-pip install pygithub apscheduler gitpython
-```
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
 
-4. **Create environment file**
-Create `.env` file in project root:
-```env
-# Required: GitHub Configuration
-GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token_here
-GITHUB_USERNAME=your_github_username
+# Install dependencies
+pip install fastapi uvicorn[standard] pydantic pydantic-settings jinja2 python-multipart requests beautifulsoup4 trafilatura openai pygithub gitpython apscheduler
 
-# Optional: AI Configuration (choose one)
-# For OpenAI:
-OPENAI_API_KEY=your_openai_api_key_here
-
-# For Local LLM (OpenAI compatible):
-OPENAI_API_KEY=your_local_llm_api_key
-OPENAI_BASE_URL=http://localhost:3100/v1
-USE_LOCAL_LLM=true
-
-# Site24x7 - No authentication needed for documentation scraping
-
-# Application Settings
-SECRET_KEY=your_secret_key_here
-SCRAPER_INTERVAL_HOURS=6
-MAINTENANCE_INTERVAL_HOURS=24
-LOG_LEVEL=INFO
-DEBUG=false
-```
-
-5. **Run the application**
-```bash
+# Start the application
 python main.py
 ```
 
-Access the dashboard at: http://localhost:5000
+### Docker Deployment (Optional)
+```bash
+git clone https://github.com/pragadheeshtamilarasan/site24x7-cli-ai-agent.git
+cd site24x7-cli-ai-agent
 
-## 🏗 Architecture Overview
+# Build and run
+docker build -t site24x7-cli-ai-agent .
+docker run -d --name site24x7-cli-ai-agent -p 5000:5000 site24x7-cli-ai-agent
+```
+
+**Access the application at:** `http://localhost:5000`
+
+## 🎯 Features
+
+### 🤖 AI-Powered Analysis
+- **OpenAI Integration**: GPT-4o for intelligent code generation
+- **Local LLM Support**: Compatible with OpenAI-compatible local models
+- **Smart Documentation**: Converts API docs into structured CLI commands
+- **Intelligent Responses**: AI-driven issue handling and code improvements
+
+### 🔄 Automated Workflows
+- **Scheduled Scraping**: Regular API documentation updates
+- **Automatic Generation**: CLI tools created from fresh documentation
+- **GitHub Automation**: Repository management, commits, and deployments
+- **Health Monitoring**: System status tracking and error recovery
+
+### 🎨 Modern Web Interface
+- **Contemporary Design**: Professional UI with modern aesthetics
+- **Real-time Dashboard**: Live system status and activity monitoring
+- **Interactive Configuration**: Web-based settings management
+- **Advanced Logging**: Comprehensive activity tracking and filtering
+
+### 🐙 GitHub Integration
+- **Repository Management**: Automatic repository creation and maintenance
+- **Version Control**: Intelligent commit messages and version tracking
+- **Issue Handling**: AI-powered issue response and resolution
+- **Release Management**: Automated releases and documentation updates
+
+## 🏗 Architecture
 
 ### Technology Stack
-- **Backend**: FastAPI + Python 3.11
+- **Backend**: FastAPI + Python 3.8+
 - **Database**: SQLite (auto-created)
 - **AI**: OpenAI GPT-4o or Local LLM (OpenAI compatible)
-- **Scheduler**: APScheduler
-- **GitHub**: PyGithub API
+- **Scheduler**: APScheduler for automated tasks
+- **GitHub**: PyGithub API integration
 - **Web Scraping**: BeautifulSoup4 + Trafilatura
-- **Frontend**: Jinja2 + Bootstrap 5
+- **Frontend**: Jinja2 + Bootstrap 5 + Modern CSS
 
 ### Core Services
-
-1. **API Scraper** - Extracts Site24x7 API documentation
-2. **CLI Generator** - Creates comprehensive CLI tools from documentation
-3. **GitHub Manager** - Autonomous repository management
+1. **API Scraper** - Extracts Site24x7 API documentation with change detection
+2. **CLI Generator** - Creates comprehensive CLI tools from documentation using AI
+3. **GitHub Manager** - Autonomous repository management and version control
 4. **AI Analyzer** - Intelligent analysis and code generation (OpenAI or Local LLM)
-5. **Scheduler** - Automated task execution
+5. **Scheduler** - Automated task execution with configurable intervals
 
 ### Database Schema
-
 **SQLite Database**: `site24x7_agent.db` (auto-created)
-
-- `configurations` - Application settings
-- `api_snapshots` - API documentation versions
-- `cli_versions` - Generated CLI versions
-- `task_logs` - System activity logs
-- `github_operations` - GitHub activity tracking
+- `configurations` - Application settings and API keys
+- `api_snapshots` - API documentation versions and change tracking
+- `cli_versions` - Generated CLI versions and metadata
+- `task_logs` - System activity logs and execution history
+- `github_operations` - GitHub activity tracking and operation history
 
 ## 🔧 Configuration
 
-### Required API Keys
+### Required Configuration
+1. **GitHub Personal Access Token** (for repository operations)
+   - Go to GitHub Settings → Developer settings → Personal access tokens
+   - Generate token with `repo`, `workflow`, `write:packages` scopes
 
-#### GitHub Personal Access Token
-1. Go to GitHub Settings > Developer settings > Personal access tokens
-2. Create new token with these scopes:
-   - `repo` (Full repository access)
-   - `workflow` (GitHub Actions)
-   - `write:packages` (Package registry)
+2. **AI Configuration** (choose one):
+   - **OpenAI**: API key from OpenAI Platform
+   - **Local LLM**: OpenAI-compatible endpoint URL and API key
 
-#### AI Configuration (Optional)
+### Web Configuration
+Access the configuration page at `http://localhost:5000/config` to set up:
+- GitHub credentials and repository settings
+- OpenAI or Local LLM configuration
+- Scheduling intervals for automated tasks
+- System preferences and logging levels
 
-The application supports both OpenAI and local LLM configurations:
+### Environment Variables (Optional)
+Create `.env` file for environment-based configuration:
+```env
+# GitHub Configuration
+GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token
+GITHUB_USERNAME=your_username
 
-**Option 1: OpenAI (Cloud)**
-1. Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
-2. Create new API key
-3. Add to `.env` file:
-   ```env
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_key
 
-**Option 2: Local LLM (OpenAI Compatible)**
-1. Set up your local LLM with OpenAI API compatibility
-2. Add to `.env` file:
-   ```env
-   OPENAI_API_KEY=your_local_llm_api_key
-   OPENAI_BASE_URL=http://localhost:3100/v1
-   USE_LOCAL_LLM=true
-   ```
+# Local LLM Configuration (alternative to OpenAI)
+OPENAI_BASE_URL=http://localhost:3100/v1
+USE_LOCAL_LLM=true
 
-**Supported Local LLM Providers:**
-- LM Studio
-- Ollama with OpenAI compatibility
-- vLLM
-- Any OpenAI-compatible endpoint
-
-AI features are disabled if no configuration is provided.
-
-# Site24x7 Configuration
-No additional authentication is required. The application scrapes publicly available API documentation.
-
-### Environment Variables
-
-| Variable | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `GITHUB_PERSONAL_ACCESS_TOKEN` | Yes | GitHub API access | - |
-| `GITHUB_USERNAME` | Yes | Your GitHub username | - |
-| `OPENAI_API_KEY` | No | OpenAI/Local LLM API key | - |
-| `OPENAI_BASE_URL` | No | Local LLM base URL (OpenAI compatible) | - |
-| `USE_LOCAL_LLM` | No | Use local LLM instead of OpenAI | false |
-| `SECRET_KEY` | No | Application security | auto-generated |
-| `SCRAPER_INTERVAL_HOURS` | No | API scraping frequency | 6 |
-| `MAINTENANCE_INTERVAL_HOURS` | No | GitHub maintenance frequency | 24 |
-| `LOG_LEVEL` | No | Logging level | INFO |
-| `DEBUG` | No | Debug mode | false |
-
-## 📁 Project Structure
-
-```
-site24x7-cli-ai-agent/
-├── main.py                    # Application entry point
-├── config.py                  # Configuration management
-├── database.py                # Database models and managers
-├── DEPLOYMENT.md              # Detailed deployment guide
-├── DOCKER_DEPLOYMENT.md       # Docker deployment guide
-├── README.md                  # This file
-│
-├── services/                  # Core business logic
-│   ├── ai_analyzer.py         # AI integration (OpenAI/Local LLM)
-│   ├── api_scraper.py         # Site24x7 API scraping
-│   ├── cli_generator.py       # CLI code generation
-│   ├── github_manager.py      # GitHub repository management
-│   └── scheduler.py           # Automated task scheduling
-│
-├── routes/                    # Web API endpoints
-│   ├── api.py                # REST API routes
-│   └── dashboard.py          # Web dashboard routes
-│
-├── templates/                 # HTML templates
-│   ├── dashboard.html        # Main dashboard
-│   ├── config.html           # Configuration page
-│   └── logs.html             # Logs viewer
-│
-├── static/                   # Static web assets
-│   ├── style.css            # Application styles
-│   └── script.js            # Frontend JavaScript
-│
-├── cli_templates/            # CLI generation templates
-├── models/                   # Data models
-└── utils/                    # Utility functions
+# Application Settings
+SECRET_KEY=your_secret_key
+SCRAPER_INTERVAL_HOURS=6
+MAINTENANCE_INTERVAL_HOURS=24
 ```
 
-## 🔄 How It Works
+## 🎮 Usage
 
-### Automated Workflow
+### Dashboard (`/dashboard`)
+- **System Status**: Real-time monitoring of all services
+- **Quick Actions**: Manual trigger for scraping, generation, and maintenance
+- **Activity Logs**: Recent task execution and GitHub operations
+- **Repository Info**: Current CLI version and GitHub statistics
 
-1. **API Documentation Scraping**
-   - Scheduled every 6 hours (configurable)
-   - Extracts Site24x7 API endpoints and documentation
-   - Detects changes using content hashing
+### Configuration (`/config`)
+- **Service Setup**: Configure GitHub, OpenAI, and Local LLM settings
+- **Scheduling**: Set intervals for automated operations
+- **Testing**: Validate configuration before saving
+- **Status Overview**: Visual indicators for all service connections
 
-2. **CLI Generation**
-   - AI analyzes API structure (when OpenAI key provided)
-   - Generates comprehensive CLI tool with proper command hierarchy
-   - Creates supporting files (README, setup.py, etc.)
+### Logs (`/logs`)
+- **Comprehensive Logging**: All system activities with timestamps
+- **Advanced Filtering**: Filter by status, type, and search terms
+- **Detailed Views**: Full operation details and error information
+- **Export Options**: Download logs for analysis
 
-3. **GitHub Repository Management**
-   - Automatically creates/updates repository
-   - Handles commits, releases, and versioning
-   - Manages issues and pull requests autonomously
-
-4. **Monitoring & Maintenance**
-   - Daily health checks
-   - Weekly deep analysis and optimization
-   - Comprehensive logging and error handling
-
-### Web Dashboard Features
-
-- **Real-time Status** - System health and service status
-- **Configuration** - Web-based settings management
-- **Logs Viewer** - Activity logs and debugging
-- **API Documentation** - Interactive API explorer
-
-## 🌐 API Endpoints
-
-### Web Interface
-- `GET /` - Redirects to dashboard
-- `GET /dashboard` - Main dashboard
-- `GET /config` - Configuration page
-- `GET /logs` - Logs viewer
-- `GET /health` - Health check
-
-### REST API
-- `GET /api/v1/status` - System status
-- `GET /api/v1/repository` - GitHub repository info
-- `GET /api/v1/logs` - Recent logs
-- `POST /api/v1/config` - Update configuration
-- `POST /api/v1/trigger-scrape` - Manual scrape trigger
-
-## 🛠 Development
-
-### Development Mode
-```bash
-# Install with development dependencies
-pip install uvicorn[standard]
-
-# Run with auto-reload
-uvicorn main:app --host 0.0.0.0 --port 5000 --reload
-```
-
-### Testing
-```bash
-# Test API endpoints
-curl http://localhost:5000/health
-curl http://localhost:5000/api/v1/status
-
-# View logs
-tail -f site24x7_agent.log
-```
-
-## 🚀 Production Deployment
-
-### Recommended Setup
-1. **Process Manager**: systemd or supervisor
-2. **Reverse Proxy**: nginx with SSL
-3. **Database**: PostgreSQL (for high concurrency)
-4. **Monitoring**: Log rotation and health checks
-5. **Backup**: Database and configuration backup
-
-### Docker Deployment
-```dockerfile
-FROM python:3.11-slim
-
-WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
-
-EXPOSE 5000
-CMD ["python", "main.py"]
-```
-
-## 🔍 Troubleshooting
+## 🚨 Troubleshooting
 
 ### Common Issues
+1. **Import Errors**: Ensure all dependencies are installed in the active environment
+2. **Port Conflicts**: Application uses port 5000 by default
+3. **API Limits**: OpenAI and GitHub APIs have rate limits
+4. **Permission Issues**: Ensure GitHub token has required scopes
 
-**Application won't start:**
-- Check Python version (3.11+ required)
-- Verify all dependencies installed
-- Check environment variables in `.env` file
-
-**GitHub API errors:**
-- Verify personal access token is valid
-- Ensure token has required scopes
-- Check GitHub username is correct
-
-**AI features not working:**
-- OpenAI API key required for AI features
-- Verify API key is valid and has credits
-- Application works without AI key (fallback mode)
-
-**Database errors:**
-- Ensure write permissions in project directory
-- Database file (`site24x7_agent.db`) created automatically
-- Check disk space availability
-
-### Log Files
-- **Application logs**: `site24x7_agent.log`
-- **Web interface**: http://localhost:5000/logs
-- **System status**: http://localhost:5000/api/v1/status
-
-## 📈 Monitoring
-
-### Health Checks
-- **Database connectivity**
-- **GitHub API status**
-- **OpenAI API status** (if configured)
-- **Scheduler service status**
-- **Recent task success rates**
-
-### Performance Metrics
-- API scraping success/failure rates
-- CLI generation times
-- GitHub operation statistics
-- System resource usage
-
-## 📖 Help Documentation
-
-This project includes comprehensive documentation to help you get started:
-
-### 📋 Available Guides
-
-| Document | Description | Use Case |
-|----------|-------------|----------|
-| **[README.md](README.md)** | Main documentation with setup instructions | First-time users, overview |
-| **[DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)** | Docker deployment guide with one-line command | Quick deployment on Ubuntu |
-| **[DEPLOYMENT.md](DEPLOYMENT.md)** | Detailed manual deployment instructions | Advanced setup, troubleshooting |
-| **[REQUIREMENTS.md](REQUIREMENTS.md)** | Technical requirements and dependencies | System administrators |
-
-### 🚀 Quick Access Commands
-
-**Docker Deployment (Ubuntu):**
-```bash
-curl -fsSL https://raw.githubusercontent.com/pragadheeshtamilarasan/site24x7-cli-ai-agent/main/simple-deploy.sh | bash
-```
-
-**Check Application Status:**
-```bash
-curl http://localhost:5000/api/v1/status
-```
-
-**View Live Logs:**
-```bash
-# Docker deployment
-docker-compose logs -f
-
-# Manual deployment  
-tail -f site24x7_agent.log
-```
-
-### 🔧 Configuration Help
-
-**Web Interface:**
-- Configuration: http://localhost:5000/config
-- Dashboard: http://localhost:5000/dashboard
-- Logs: http://localhost:5000/logs
-
-**Environment Variables:**
-- GitHub token setup instructions in main README
-- AI configuration (OpenAI/Local LLM) in configuration section
-- All variables documented in environment table
-
-### 🆘 Getting Help
-
-1. **Check Status**: Visit http://localhost:5000/api/v1/status
-2. **View Logs**: Check application logs for error details
-3. **Documentation**: Review appropriate guide based on your setup
-4. **Configuration**: Verify all required environment variables are set
-
-### 📞 Support Resources
-
-- **GitHub Issues**: Report bugs or request features
-- **Documentation**: Comprehensive guides for all deployment types
-- **Health Checks**: Built-in monitoring and diagnostics
-- **Log Analysis**: Detailed logging for troubleshooting
+### Logs and Debugging
+- **Application Logs**: Check `site24x7_agent.log` for detailed error information
+- **Console Output**: Run `python main.py` directly to see real-time logs
+- **Database Logs**: Access `/logs` page for historical operation data
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## 🙏 Acknowledgments
 
-For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
-
-For issues and questions:
-1. Check application logs (`site24x7_agent.log`)
-2. Review web dashboard status indicators
-3. Verify environment variables and API keys
-4. Create GitHub issue with error details
+- **Site24x7** for providing comprehensive API documentation
+- **OpenAI** for powerful AI capabilities
+- **GitHub** for excellent API and platform support
+- **FastAPI** for the robust web framework
