@@ -46,10 +46,10 @@ cd site24x7-cli-ai-agent
 
 # Build and run
 docker build -t site24x7-cli-ai-agent .
-docker run -d --name site24x7-cli-ai-agent -p 5545:5545 site24x7-cli-ai-agent
+docker run -d --name site24x7-cli-ai-agent -p 8080:8080 site24x7-cli-ai-agent
 ```
 
-**Access the application at:** `http://localhost:5545`
+**Access the application at:** `http://localhost:8080`
 
 ## 🎯 Features
 
@@ -115,7 +115,7 @@ docker run -d --name site24x7-cli-ai-agent -p 5545:5545 site24x7-cli-ai-agent
    - **Local LLM**: OpenAI-compatible endpoint URL and API key
 
 ### Web Configuration
-Access the configuration page at `http://localhost:5545/config` to set up:
+Access the configuration page at `http://localhost:8080/config` to set up:
 - GitHub credentials and repository settings
 - OpenAI or Local LLM configuration
 - Scheduling intervals for automated tasks
