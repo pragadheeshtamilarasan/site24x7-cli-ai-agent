@@ -6,6 +6,13 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 
 ## Current Status (July 25, 2025)
 
+✅ **Port Changed to 8080 (Replit-Compatible)**
+- Successfully updated application to run on port 8080 (avoiding blocked port 5000)
+- Port 8080 is available and commonly used in Replit deployments
+- Updated all configuration files and deployment scripts
+- Modified Docker containers and health checks for new port
+- Updated all documentation to reflect new port configuration
+
 ✅ **Mac Deployment Simplified**
 - Removed all corporate network deployment complexity
 - Created simple mac-deploy.sh for local Mac development
@@ -18,7 +25,7 @@ This is an autonomous AI agent that scrapes Site24x7 API documentation, generate
 - Resolved TaskLogger import errors throughout scheduler service
 - Made GitHub initialization fault-tolerant with optional git
 - Disabled blocking initial tasks to ensure quick startup
-- Application now runs stably on port 5545 with all services active
+- Application now runs stably on port 8080 with all services active
 
 ## Recent Changes
 
