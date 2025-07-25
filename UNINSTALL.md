@@ -119,7 +119,7 @@ rm ~/Library/LaunchAgents/com.site24x7.cli.agent.plist
 If you want to remove saved configurations from your browser:
 1. Open your browser
 2. Go to Settings → Privacy → Clear browsing data
-3. Select "Cookies and site data" for localhost:5000
+3. Select "Cookies and site data" for localhost:8080
 
 ## ✅ Verification
 
@@ -144,7 +144,7 @@ To verify complete removal:
 
 4. **Test port availability:**
    ```bash
-   lsof -i :5000
+   lsof -i :8080
    ```
 
 If all commands return no results, the uninstallation is complete.
