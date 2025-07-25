@@ -1,0 +1,53 @@
+(base) pragad-8250@pragad-8250 site24x7-cli-ai-agent % ./mac-deploy.sh
+🚀 Site24x7 CLI AI Agent - Mac Deployment
+=========================================
+✅ Docker found - you can use Docker deployment
+
+Choose deployment method:
+1) Docker (recommended if Docker is installed)
+2) Python virtual environment
+3) Uninstall Site24x7 CLI AI Agent
+
+Enter choice (1, 2, or 3): 1
+
+🐳 Using Docker deployment...
+Building Docker image...
+[+] Building 3.7s (12/12) FINISHED                                                                                                                                                               docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                                                                                             0.0s
+ => => transferring dockerfile: 1.06kB                                                                                                                                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.11-slim                                                                                                                                              3.4s
+ => [internal] load .dockerignore                                                                                                                                                                                0.0s
+ => => transferring context: 549B                                                                                                                                                                                0.0s
+ => [1/7] FROM docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                                        0.0s
+ => => resolve docker.io/library/python:3.11-slim@sha256:0ce77749ac83174a31d5e107ce0cfa6b28a2fd6b0615e029d9d84b39c48976ee                                                                                        0.0s
+ => [internal] load build context                                                                                                                                                                                0.0s
+ => => transferring context: 709.40kB                                                                                                                                                                            0.0s
+ => CACHED [2/7] WORKDIR /app                                                                                                                                                                                    0.0s
+ => CACHED [3/7] RUN apt-get update &&     apt-get install -y --no-install-recommends     git     curl     ca-certificates     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*                                  0.0s
+ => CACHED [4/7] COPY pyproject.toml ./                                                                                                                                                                          0.0s
+ => CACHED [5/7] RUN pip install --no-cache-dir     fastapi     uvicorn     pydantic     pydantic-settings     python-multipart     jinja2     openai     requests     beautifulsoup4     trafilatura     pygit  0.0s
+ => [6/7] COPY . .                                                                                                                                                                                               0.0s
+ => [7/7] RUN mkdir -p /app/data &&     chmod +x /app/main.py                                                                                                                                                    0.1s
+ => exporting to image                                                                                                                                                                                           0.1s
+ => => exporting layers                                                                                                                                                                                          0.0s
+ => => exporting manifest sha256:2fb1af93a982a75bb68cddd8f2e9977240a103f06c96d6a44f709c9a21e86eec                                                                                                                0.0s
+ => => exporting config sha256:f61b224c66b5af36a5923afce5a5898602cbba430efc86e2d5f7b5dee08e4216                                                                                                                  0.0s
+ => => exporting attestation manifest sha256:8b7bdc9b35a6ad05d2c064956389f21eec882a379cfe32432648e5642b6a292a                                                                                                    0.0s
+ => => exporting manifest list sha256:1b5eb4a3ffb2a18477c6a1fe231d9072e27e39bc680c3e86927f7b5be0e5320d                                                                                                           0.0s
+ => => naming to docker.io/library/site24x7-cli-ai-agent:latest                                                                                                                                                  0.0s
+ => => unpacking to docker.io/library/site24x7-cli-ai-agent:latest                                                                                                                                               0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/6h2kl3d73e9440m3juaj8wfcu
+Starting container...
+site24x7-cli-ai-agent
+site24x7-cli-ai-agent
+583952b1a05f8419184ec3e0b5c1f7228be46301cbb852c2ea6c537ae926a3ac
+
+✅ Docker deployment complete!
+🌐 Application running at: http://localhost:8080
+
+Useful commands:
+  View logs: docker logs site24x7-cli-ai-agent
+  Stop: docker stop site24x7-cli-ai-agent
+  Start: docker start site24x7-cli-ai-agent
+  Remove: docker rm -f site24x7-cli-ai-agent
