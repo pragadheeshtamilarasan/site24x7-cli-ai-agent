@@ -302,6 +302,34 @@ async def trigger_cli_generation():
         TaskLogger.log("api_action", "failed", f"CLI generation failed: {e}")
         raise HTTPException(status_code=500, detail=f"CLI generation failed: {str(e)}")
 
+@router.post("/actions/trigger-github-poll")
+async def trigger_github_poll():
+    """Manually trigger GitHub polling for testing"""
+    try:
+        from main import scheduler_service
+        
+        # Get the scheduler service instance
+        if not scheduler_service:
+            return {"status": "error", "message": "Scheduler service not available"}
+        
+        # Get GitHub poller from scheduler
+        github_poller = scheduler_service.github_poller
+        if not github_poller:
+            return {"status": "error", "message": "GitHub poller not initialized"}
+        
+        # Trigger manual poll
+        results = await github_poller.poll_all_activity()
+        
+        return {
+            "status": "success", 
+            "message": "GitHub polling triggered successfully",
+            "results": results
+        }
+        
+    except Exception as e:
+        logger.error(f"Manual GitHub poll failed: {e}")
+        return {"status": "error", "message": f"GitHub polling failed: {str(e)}"}
+
 @router.post("/test-config")
 async def test_config(request: Request):
     """Test configuration settings"""
