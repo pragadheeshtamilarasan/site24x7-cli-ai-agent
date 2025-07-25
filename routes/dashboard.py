@@ -53,21 +53,100 @@ async def dashboard(request: Request):
 async def config_page(request: Request):
     """Configuration management page"""
     try:
-        config = ConfigurationManager.get_all()
+        configs = ConfigurationManager.get_all()
+        success_message = request.query_params.get('updated')
         
         context = {
             "request": request,
-            "config": config
+            "configs": configs,
+            "success_message": "Configuration updated successfully!" if success_message else None
         }
         
-        return templates.TemplateResponse("config.html", context)
+        return templates.TemplateResponse("config_new.html", context)
         
     except Exception as e:
         logger.error(f"Config page error: {e}")
         raise HTTPException(status_code=500, detail="Configuration page unavailable")
 
+@router.post("/config")
+async def update_config(request: Request):
+    """Update configuration from new UI form"""
+    from fastapi.responses import RedirectResponse
+    
+    try:
+        form_data = await request.form()
+        
+        # Convert form data to configuration updates
+        config_updates = {}
+        
+        # Handle AI provider selection
+        if form_data.get('ai_provider') == 'local':
+            config_updates['use_local_llm'] = True
+        else:
+            config_updates['use_local_llm'] = False
+        
+        # Handle all other form fields
+        field_mappings = {
+            'github_token': 'github_token',
+            'github_repo_name': 'github_repo_name', 
+            'github_username': 'github_username',
+            'github_polling_interval': 'github_polling_interval',
+            'openai_api_key': 'openai_api_key',
+            'openai_model': 'openai_model',
+            'openai_base_url': 'openai_base_url',
+            'site24x7_docs_url': 'site24x7_docs_url',
+            'scraper_interval_hours': 'scraper_interval_hours',
+            'maintenance_interval_hours': 'maintenance_interval_hours',
+            'notification_email': 'notification_email',
+            'slack_webhook_url': 'slack_webhook_url'
+        }
+        
+        for form_field, config_key in field_mappings.items():
+            value = form_data.get(form_field, '').strip()
+            if value:
+                # Convert numeric fields
+                if config_key in ['scraper_interval_hours', 'maintenance_interval_hours', 'github_polling_interval']:
+                    config_updates[config_key] = int(value)
+                else:
+                    config_updates[config_key] = value
+        
+        # Handle boolean checkboxes
+        boolean_fields = [
+            'enable_auto_deployment',
+            'enable_issue_auto_response', 
+            'enable_pr_auto_merge',
+            'debug_mode'
+        ]
+        
+        for field in boolean_fields:
+            config_updates[field] = bool(form_data.get(field))
+        
+        # Save all configuration updates
+        for key, value in config_updates.items():
+            ConfigurationManager.set(key, value)
+        
+        # Log configuration update
+        TaskLogger.log(
+            "configuration",
+            "updated", 
+            "Configuration updated via new UI",
+            {"updated_fields": list(config_updates.keys())}
+        )
+        
+        # Redirect with success message
+        return RedirectResponse(url="/config?updated=true", status_code=303)
+        
+    except Exception as e:
+        logger.error(f"Configuration update error: {e}")
+        configs = ConfigurationManager.get_all()
+        return templates.TemplateResponse("config_new.html", {
+            "request": request,
+            "configs": configs,
+            "error_message": f"Failed to update configuration: {str(e)}"
+        })
+
 @router.post("/config/update")
-async def update_config(
+async def update_config_legacy(
     request: Request,
     github_token: str = Form(None),
     github_username: str = Form(None),
