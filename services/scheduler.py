@@ -33,6 +33,14 @@ class SchedulerService:
             logger.warning(f"GitHub manager initialization failed: {e}")
             self.github_manager = None
         
+        # Initialize GitHub poller for local deployment
+        try:
+            from services.github_poller import GitHubPoller
+            self.github_poller = GitHubPoller()
+        except Exception as e:
+            logger.warning(f"GitHub poller initialization failed: {e}")
+            self.github_poller = None
+        
         # Track last successful runs
         self.last_scrape = None
         self.last_generation = None
@@ -49,6 +57,17 @@ class SchedulerService:
                 IntervalTrigger(hours=settings.scraper_interval_hours),
                 id='scrape_and_update',
                 name='Scrape API docs and update CLI',
+                replace_existing=True
+            )
+            
+            # Schedule GitHub polling for local deployment (configurable interval)
+            from database import ConfigurationManager
+            polling_interval = ConfigurationManager.get('github_polling_interval', 15)
+            self.scheduler.add_job(
+                self._poll_github_activity,
+                IntervalTrigger(minutes=polling_interval),
+                id='github_polling',
+                name=f'GitHub polling for issues and PRs (every {polling_interval} minutes)',
                 replace_existing=True
             )
             
@@ -385,3 +404,39 @@ class SchedulerService:
         except Exception as e:
             logger.error(f"Manual maintenance failed: {e}")
             return {"status": "error", "message": str(e)}
+    
+    async def _poll_github_activity(self):
+        """Poll GitHub for new issues, PRs, and activity (for local deployment)"""
+        try:
+            if not self.github_poller:
+                logger.debug("GitHub poller not available - skipping polling")
+                return
+            
+            logger.info("Polling GitHub for new activity...")
+            
+            # Poll for all activity
+            activities = await self.github_poller.poll_all_activity()
+            
+            if activities:
+                total_items = sum(len(items) for items in activities.values() if items)
+                if total_items > 0:
+                    logger.info(f"GitHub polling found {total_items} new activities")
+                    
+                    # Log the polling results
+                    from database import TaskLogger
+                    TaskLogger.log(
+                        "github_polling",
+                        "completed",
+                        f"Polled GitHub successfully - {total_items} new activities",
+                        activities
+                    )
+                else:
+                    logger.debug("GitHub polling completed - no new activity")
+            
+        except Exception as e:
+            logger.error(f"GitHub polling error: {e}")
+            try:
+                from database import TaskLogger
+                TaskLogger.log("github_polling", "failed", f"Polling error: {e}")
+            except Exception as log_error:
+                logger.error(f"Failed to log polling error: {log_error}")
